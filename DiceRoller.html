@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mobile Dice Roller</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      color: white;
+      background-color: #222;
+      position: fixed; /* Prevent bouncing on iOS */
+    }
+    
+    /* Dice rolling area */
+    #dice-box {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      background-image: url('/api/placeholder/1920/1080');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    /* Layout */
+    #app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    
+    /* Header */
+    #header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      height: 60px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    #result-display {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #roll-result {
+      font-size: 28px;
+      font-weight: bold;
+    }
+    
+    #roll-details {
+      font-size: 12px;
+      color: #aaa;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    /* Menu button */
+    #menu-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(58, 123, 213, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    
+    #menu-btn div {
+      width: 24px;
+      height: 2px;
+      background: white;
+      position: relative;
+    }
+    
+    #menu-btn div::before,
+    #menu-btn div::after {
+      content: '';
+      position: absolute;
+      width: 24px;
+      height: 2px;
+      background: white;
+      left: 0;
+    }
+    
+    #menu-btn div::before {
+      top: -6px;
+    }
+    
+    #menu-btn div::after {
+      bottom: -6px;
+    }
+    
+    /* Main area */
+    #main-area {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Bottom controls */
+    #dice-controls {
+      display: flex;
+      justify-content: center;
+      padding: 15px 10px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .dice-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .dice-btn {
+      padding: 12px 0;
+      background: linear-gradient(to bottom, #3a7bd5, #2b5876);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      user-select: none;
+      -webkit-user-select: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dice-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(to bottom, #326bba, #254c65);
+    }
+    
+    /* Slide-up panels */
+    .slide-panel {
+      position: absolute;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      max-height: 70%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 20px;
+      z-index: 100;
+      transform: translateY(0);
+    }
+    
+    .slide-panel.visible {
+      transform: translateY(-100%);
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .panel-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0;
+    }
+    
+    .close-panel {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    
+    .close-panel::before,
+    .close-panel::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 2px;
+      background: white;
+    }
+    
+    .close-panel::before {
+      transform: rotate(45deg);
+    }
+    
+    .close-panel::after {
+      transform: rotate(-45deg);
+    }
+    
+    /* Form elements */
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #3a7bd5;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to bottom, #3a7bd5, #2b5876);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    
+    .action-btn:active {
+      background: linear-gradient(to bottom, #326bba, #254c65);
+    }
+    
+    /* Menu panel */
+    #menu-panel ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    #menu-panel li {
+      margin-bottom: 5px;
+    }
+    
+    #menu-panel button {
+      width: 100%;
+      text-align: left;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    #menu-panel button:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    #menu-panel button svg {
+      margin-right: 10px;
+      width: 20px;
+      height: 20px;
+    }
+    
+    /* History panel */
+    .history-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .history-time {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    
+    .history-roll {
+      font-weight: bold;
+    }
+    
+    .history-result {
+      float: right;
+      color: #3a7bd5;
+    }
+    
+    /* Presets panel */
+    .preset-btn {
+      width: 100%;
+      text-align: left;
+      padding: 14px;
+      margin-bottom: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .preset-btn:active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Success/Failure modal */
+    #result-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      z-index: 200;
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+      transition: transform 0.3s ease-out;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0.5rem;
+    }
+    
+    #result-modal.show {
+      transform: translate(-50%, -50%) scale(1);
+      animation: pulse 1.5s infinite alternate;
+    }
+    
+    .passed {
+      color: #2ecc71;
+      text-shadow: 0 0 20px rgba(46, 204, 113, 0.8);
+    }
+    
+    .failed {
+      color: #e74c3c;
+      text-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+    }
+    
+    #particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 190;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+    
+    /* Backdrop overlay */
+    #backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    
+    #backdrop.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="dice-box"></div>
+  
+  <div id="backdrop"></div>
+  
+  <div id="app-container">
+    <!-- Header with result display -->
+    <div id="header">
+      <div id="menu-btn">
+        <div></div>
+      </div>
+      <div id="result-display">
+        <div id="roll-result">-</div>
+        <div id="roll-details">Roll the dice</div>
+      </div>
+      <div style="width: 40px;"></div> <!-- Spacer for balance -->
+    </div>
+    
+    <!-- Main area for dice rolling -->
+    <div id="main-area"></div>
+    
+    <!-- Bottom dice controls -->
+    <div id="dice-controls">
+      <div class="dice-grid">
+        <button class="dice-btn" data-dice="d4">d4</button>
+        <button class="dice-btn" data-dice="d6">d6</button>
+        <button class="dice-btn" data-dice="d8">d8</button>
+        <button class="dice-btn" data-dice="d10">d10</button>
+        <button class="dice-btn" data-dice="d12">d12</button>
+        <button class="dice-btn" data-dice="d20">d20</button>
+        <button class="dice-btn" data-dice="d100">d100</button>
+        <button class="dice-btn" data-dice="2d6">2d6</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Menu Panel -->
+  <div id="menu-panel" class="slide-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Menu</h2>
+      <div class="close-panel"></div>
+    </div>
+    <ul>
+      <li>
+        <button id="custom-roll-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 19 7 19 17 12 22 5 17 5 7 12 2"></polygon>
+          </svg>
+          Custom Roll
+        </button>
+      </li>
+      <li>
+        <button id="skill-check-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          Skill Check
+        </button>
+      </li>
+      <li>
+        <button id="presets-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Presets
+        </button>
+      </li>
+      <li>
+        <button id="history-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          Roll History
+        </button>
+      </li>
+    </ul>
+  </div>
+  
+  <!-- Custom Roll Panel -->
+  <div id="custom-roll-panel" class="slide-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Custom Roll</h2>
+      <div class="close-panel"></div>
+    </div>
+    <div class="form-group">
+      <label for="custom-dice-notation">Dice Notation (e.g., 2d20+1d6+5)</label>
+      <input type="text" id="custom-dice-notation" class="form-control" value="1d20" 
+             pattern="[0-9]*d[0-9]+([+-][0-9]*d[0-9]+)*([+-][0-9]+)*" inputmode="text">
+    </div>
+    <button id="roll-custom-btn" class="action-btn">Roll Dice</button>
+    
+    <div style="margin-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
+      <p style="color: #aaa; font-size: 14px;">Examples:</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="3d6">3d6</button>
+        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="1d20+5">1d20+5</button>
+        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="2d8+1d6">2d8+1d6</button>
+        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="2d20kh1">2d20kh1 (Advantage)</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Skill Check Panel -->
+  <div id="skill-check-panel" class="slide-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">D&D Skill Check</h2>
+      <div class="close-panel"></div>
+    </div>
+    <div class="form-group">
+      <label for="skill-name">Skill Name</label>
+      <input type="text" id="skill-name" class="form-control" value="Perception">
+    </div>
+    <div class="form-group">
+      <label for="skill-mod">Modifier</label>
+      <input type="number" id="skill-mod" class="form-control" value="2" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label for="difficulty-class">Difficulty Class (DC)</label>
+      <input type="number" id="difficulty-class" class="form-control" value="15" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label for="advantage-type">Roll Type</label>
+      <select id="advantage-type" class="form-control">
+        <option value="normal">Normal Roll</option>
+        <option value="advantage">Advantage</option>
+        <option value="disadvantage">Disadvantage</option>
+      </select>
+    </div>
+    <button id="roll-skill-check-btn" class="action-btn">Roll Skill Check</button>
+  </div>
+  
+  <!-- Presets Panel -->
+  <div id="presets-panel" class="slide-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Dice Presets</h2>
+      <div class="close-panel"></div>
+    </div>
+    
+    <h3 style="margin-top: 0; color: #ccc; font-size: 16px;">Character Creation</h3>
+    <button class="preset-btn" data-dice="4d6kh3">Ability Score (4d6, keep highest 3)</button>
+    <button class="preset-btn" data-dice="4d6kh3+4d6kh3+4d6kh3+4d6kh3+4d6kh3+4d6kh3">Full Character Stats (6 ability scores)</button>
+    
+    <h3 style="color: #ccc; font-size: 16px;">Combat Rolls</h3>
+    <button class="preset-btn" data-dice="2d20kh1">Advantage (2d20, keep highest)</button>
+    <button class="preset-btn" data-dice="2d20kl1">Disadvantage (2d20, keep lowest)</button>
+    <button class="preset-btn" data-dice="1d20+5">Attack Roll (+5)</button>
+    
+    <h3 style="color: #ccc; font-size: 16px;">Damage Rolls</h3>
+    <button class="preset-btn" data-dice="1d8+3">Longsword (+3)</button>
+    <button class="preset-btn" data-dice="2d6+5">Greatsword (+5)</button>
+    <button class="preset-btn" data-dice="1d8+2d6">Sneak Attack (1d8+2d6)</button>
+    <button class="preset-btn" data-dice="8d6">Fireball (8d6)</button>
+  </div>
+  
+  <!-- History Panel -->
+  <div id="history-panel" class="slide-panel">
+    <div class="panel-header">
+      <h2 class="panel-title">Roll History</h2>
+      <div class="close-panel"></div>
+    </div>
+    <div id="history-content">
+      <!-- History items will be added here -->
+      <p>No rolls yet</p>
+    </div>
+  </div>
+  
+  <!-- Result Modal -->
+  <div id="result-modal"></div>
+  <div id="particles-container"></div>
+  
+  <script type="module">
+    // Import the dice box library
+    import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";
+    
+    // Initialize the 3D dice box
+    const Box = new DiceBox("#dice-box", {
+      scale: 5,
+      throwForce: 5.5,
+      gravity: 2.5,
+      spinForce: 5,
+      lightIntensity: 0.8,
+      shadowTransparency: 0.6,
+      theme: 'default',
+      createCanvas: true
+    });
+    
+    // Initialize the box when the page loads
+    Box.initialize().then(() => {
+      document.getElementById("roll-details").textContent = "Ready to roll";
+      console.log("Dice box initialized");
+    }).catch(error => {
+      console.error("Error initializing dice box:", error);
+      document.getElementById("roll-details").textContent = "Error loading dice";
+    });
+    
+    // Roll history
+    let rollHistory = [];
+    const maxHistoryItems = 20;
+    
+    // Panel state
+    let activePanel = null;
+    
+    // Function to roll dice
+    function rollDice(notation) {
+      // Close any open panels
+      closeAllPanels();
+      
+      // Update display while rolling
+      document.getElementById("roll-result").textContent = "Rolling...";
+      document.getElementById("roll-details").textContent = notation;
+      
+      // Roll the dice with a small delay to let the UI update
+      setTimeout(() => {
+        Box.roll(notation).then(results => {
+          console.log("Roll results:", results);
+          
+          // Process and display results
+          const total = results.total;
+          let breakdown = '';
+          
+          if (results.rolls && results.rolls.length > 0) {
+            breakdown = results.rolls.map(roll => {
+              return `${roll.dice}: [${roll.values.join(', ')}]`;
+            }).join(' + ');
+            
+            if (results.modifier) {
+              const modSign = results.modifier >= 0 ? '+' : '';
+              breakdown += ` ${modSign}${results.modifier}`;
+            }
+          }
+          
+          // Update display with results
+          document.getElementById("roll-result").textContent = total;
+          document.getElementById("roll-details").textContent = breakdown;
+          
+          // Add to history
+          addToHistory(notation, total, breakdown);
+        }).catch(error => {
+          console.error("Error rolling dice:", error);
+          document.getElementById("roll-result").textContent = "Error";
+          document.getElementById("roll-details").textContent = "Error rolling dice: " + error.message;
+        });
+      }, 100);
+    }
+    
+    // Function to perform a skill check
+    function performSkillCheck() {
+      // Get values from form
+      const skillName = document.getElementById("skill-name").value || "Check";
+      const skillMod = parseInt(document.getElementById("skill-mod").value) || 0;
+      const difficultyClass = parseInt(document.getElementById("difficulty-class").value) || 10;
+      const advantageType = document.getElementById("advantage-type").value;
+      
+      // Close panels
+      closeAllPanels();
+      
+      // Determine dice notation based on advantage type
+      let notation;
+      switch (advantageType) {
+        case 'advantage':
+          notation = `2d20kh1+${skillMod}`;
+          break;
+        case 'disadvantage':
+          notation = `2d20kl1+${skillMod}`;
+          break;
+        default:
+          notation = `1d20+${skillMod}`;
+      }
+      
+      // Update display
+      document.getElementById("roll-result").textContent = "Rolling...";
+      document.getElementById("roll-details").textContent = `${skillName} check (DC ${difficultyClass})`;
+      
+      // Roll with a small delay to let the UI update
+      setTimeout(() => {
+        Box.roll(notation).then(results => {
+          const total = results.total;
+          const passed = total >= difficultyClass;
+          
+          // Update display
+          document.getElementById("roll-result").textContent = total;
+          document.getElementById("roll-details").textContent = 
+            `${skillName} check (DC ${difficultyClass}): ${passed ? 'SUCCESS' : 'FAILURE'}`;
+          
+          // Show success/failure animation
+          showResultModal(passed, total, difficultyClass);
+          
+          // Add to history
+          addToHistory(`${skillName} (DC ${difficultyClass})`, total, 
+                        passed ? "Success" : "Failure");
+        }).catch(error => {
+          console.error("Error rolling dice:", error);
+          document.getElementById("roll-result").textContent = "Error";
+          document.getElementById("roll-details").textContent = "Error rolling dice: " + error.message;
+        });
+      }, 100);
+    }
+    
+    // Function to show success/failure modal with animation
+    function showResultModal(passed, roll, threshold) {
+      // Clear any existing modal content
+      const resultModal = document.getElementById("result-modal");
+      resultModal.innerHTML = "";
+      resultModal.className = passed ? "passed" : "failed";
+      
+      // Add content
+      resultModal.innerHTML = `
+        <span>${passed ? "SUCCESS" : "FAILURE"}</span>
+        <span>(${roll} vs ${threshold})</span>
+      `;
+      
+      // Clear any existing particles
+      const particlesContainer = document.getElementById("particles-container");
+      particlesContainer.innerHTML = "";
+      
+      // Create particles
+      createParticles(passed, particlesContainer);
+      
+      // Show the modal with animation
+      setTimeout(() => {
+        resultModal.classList.add("show");
+      }, 500);
+      
+      // Auto-hide after a few seconds
+      setTimeout(() => {
+        resultModal.classList.remove("show");
+      }, 3000);
+    }
+    
+    // Function to create particles
+    function createParticles(passed, container) {
+      // Define colors based on success/failure
+      const colors = passed ?
+        ['#2ecc71', '#27ae60', '#a9dfbf'] :
+        ['#e74c3c', '#c0392b', '#f5b7b1'];
+      
+      // Create a style element for keyframes
+      const styleSheet = document.createElement("style");
+      document.head.appendChild(styleSheet);
+      
+      let keyframesCSS = "";
+      
+      // Create fewer particles for mobile
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement("div");
+        
+        // Random size
+        const size = Math.random() * 30 + 5;
+        
+        // Set styles
+        particle.style.position = "absolute";
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.borderRadius = "50%";
+        particle.style.top = "50%";
+        particle.style.left = "50%";
+        particle.style.opacity = Math.random() * 0.7 + 0.3;
+        
+        // Random end position
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 80 + Math.random() * 150; // Smaller distance for mobile
+        const endX = Math.cos(angle) * distance;
+        const endY = Math.sin(angle) * distance;
+        
+        // Animation properties
+        const duration = Math.random() * 1.5 + 0.5;
+        const delay = Math.random() * 0.2;
+        
+        // Set animation
+        particle.style.animation = `particle-${i} ${duration}s ease-out ${delay}s forwards`;
+        
+        // Create keyframes
+        keyframesCSS += `
+          @keyframes particle-${i} {
+            0% {
+              transform: translate(-50%,
