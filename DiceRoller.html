@@ -2,27 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Mobile Dice Roller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced 3D Dice Roller</title>
   <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: white;
-      background-color: #222;
-      position: fixed; /* Prevent bouncing on iOS */
     }
     
-    /* Dice rolling area */
     #dice-box {
       width: 100%;
       height: 100%;
@@ -35,115 +27,32 @@
       background-position: center;
     }
     
-    /* Layout */
-    #app-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      position: relative;
-      z-index: 2;
-    }
-    
-    /* Header */
-    #header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.7);
+    /* UI Components */
+    .panel {
+      position: fixed;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      z-index: 10;
       backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      height: 60px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    #result-display {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    #roll-result {
-      font-size: 28px;
-      font-weight: bold;
-    }
-    
-    #roll-details {
-      font-size: 12px;
-      color: #aaa;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    
-    /* Menu button */
-    #menu-btn {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: rgba(58, 123, 213, 0.2);
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    
-    #menu-btn div {
-      width: 24px;
-      height: 2px;
-      background: white;
-      position: relative;
-    }
-    
-    #menu-btn div::before,
-    #menu-btn div::after {
-      content: '';
-      position: absolute;
-      width: 24px;
-      height: 2px;
-      background: white;
-      left: 0;
-    }
-    
-    #menu-btn div::before {
-      top: -6px;
-    }
-    
-    #menu-btn div::after {
-      bottom: -6px;
-    }
-    
-    /* Main area */
-    #main-area {
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    /* Bottom controls */
+    /* Main Controls */
     #dice-controls {
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      padding: 15px 10px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .dice-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
-      width: 100%;
-      max-width: 400px;
+      max-width: 80%;
     }
     
     .dice-btn {
-      padding: 12px 0;
+      padding: 12px 20px;
       background: linear-gradient(to bottom, #3a7bd5, #2b5876);
       border: none;
       border-radius: 8px;
@@ -151,172 +60,155 @@
       font-size: 18px;
       font-weight: bold;
       cursor: pointer;
-      touch-action: manipulation;
-      -webkit-touch-callout: none;
-      user-select: none;
-      -webkit-user-select: none;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dice-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(to bottom, #4a8fe0, #366b94);
     }
     
     .dice-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-      background: linear-gradient(to bottom, #326bba, #254c65);
-    }
-    
-    /* Slide-up panels */
-    .slide-panel {
-      position: absolute;
-      bottom: -100%;
-      left: 0;
-      width: 100%;
-      max-height: 70%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 20px;
-      z-index: 100;
       transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     
-    .slide-panel.visible {
-      transform: translateY(-100%);
+    /* Results Panel */
+    #results-panel {
+      top: 20px;
+      left: 20px;
+      min-width: 200px;
     }
     
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .panel-title {
-      font-size: 18px;
+    #roll-result {
+      font-size: 36px;
       font-weight: bold;
-      margin: 0;
+      text-align: center;
+      margin: 10px 0;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     }
     
-    .close-panel {
-      width: 30px;
-      height: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      cursor: pointer;
-    }
-    
-    .close-panel::before,
-    .close-panel::after {
-      content: '';
-      position: absolute;
-      width: 16px;
-      height: 2px;
-      background: white;
-    }
-    
-    .close-panel::before {
-      transform: rotate(45deg);
-    }
-    
-    .close-panel::after {
-      transform: rotate(-45deg);
-    }
-    
-    /* Form elements */
-    .form-group {
-      margin-bottom: 15px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
+    #roll-details {
       font-size: 14px;
-      color: #ccc;
+      color: #aaa;
+      margin-bottom: 10px;
     }
     
-    .form-control {
-      width: 100%;
-      padding: 12px;
+    /* Custom Roll Panel */
+    #custom-roll-panel {
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    #custom-roll-panel input {
+      padding: 8px 12px;
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
+      border-radius: 5px;
       color: white;
       font-size: 16px;
     }
     
-    .form-control:focus {
+    #custom-roll-panel input:focus {
       outline: none;
-      border-color: #3a7bd5;
+      border-color: rgba(255, 255, 255, 0.4);
       background: rgba(255, 255, 255, 0.15);
     }
     
-    .action-btn {
-      width: 100%;
-      padding: 14px;
+    #custom-roll-panel button {
+      padding: 8px 15px;
       background: linear-gradient(to bottom, #3a7bd5, #2b5876);
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
       color: white;
-      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 10px;
     }
     
-    .action-btn:active {
-      background: linear-gradient(to bottom, #326bba, #254c65);
+    /* D&D Skill Check Panel */
+    #skill-check-panel {
+      bottom: 100px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
     
-    /* Menu panel */
-    #menu-panel ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    
-    #menu-panel li {
-      margin-bottom: 5px;
-    }
-    
-    #menu-panel button {
-      width: 100%;
-      text-align: left;
-      padding: 14px;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
+    .form-group {
       display: flex;
       align-items: center;
+      gap: 10px;
     }
     
-    #menu-panel button:active {
-      background: rgba(255, 255, 255, 0.2);
+    .form-group label {
+      min-width: 80px;
     }
     
-    #menu-panel button svg {
-      margin-right: 10px;
-      width: 20px;
-      height: 20px;
+    .form-group input, .form-group select {
+      flex: 1;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      color: white;
     }
     
-    /* History panel */
+    #skill-check-panel button {
+      padding: 8px 15px;
+      background: linear-gradient(to bottom, #3a7bd5, #2b5876);
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+    
+    /* Roll History Panel */
+    #history-panel {
+      top: 20px;
+      bottom: 20px;
+      right: -300px;
+      width: 250px;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    
+    #history-panel.visible {
+      right: 20px;
+    }
+    
+    #history-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 15;
+    }
+    
+    #history-toggle.active {
+      background: #3a7bd5;
+    }
+    
     .history-item {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      padding: 10px;
       margin-bottom: 10px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      border-left: 3px solid #3a7bd5;
     }
     
     .history-time {
@@ -330,46 +222,27 @@
     }
     
     .history-result {
+      color: #66ccff;
       float: right;
-      color: #3a7bd5;
     }
     
-    /* Presets panel */
-    .preset-btn {
-      width: 100%;
-      text-align: left;
-      padding: 14px;
-      margin-bottom: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    
-    .preset-btn:active {
-      background: rgba(255, 255, 255, 0.2);
-    }
-    
-    /* Success/Failure modal */
+    /* Roll success/failure animation */
     #result-modal {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0);
-      z-index: 200;
-      font-size: 2.5rem;
+      z-index: 100;
+      font-size: 3rem;
       font-weight: bold;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       transition: transform 0.3s ease-out;
       pointer-events: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      gap: 0.5rem;
+      gap: 1rem;
     }
     
     #result-modal.show {
@@ -394,7 +267,7 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 190;
+      z-index: 90;
     }
     
     @keyframes pulse {
@@ -406,200 +279,152 @@
       }
     }
     
-    /* Backdrop overlay */
-    #backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 90;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
+    /* Presets panel */
+    #presets-panel {
+      bottom: 100px;
+      right: 20px;
     }
     
-    #backdrop.visible {
-      opacity: 1;
-      pointer-events: auto;
+    .preset-btn {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .preset-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Help tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 5px;
+      width: 16px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      text-align: center;
+      line-height: 16px;
+      font-size: 12px;
+      cursor: help;
+    }
+    
+    .tooltip:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 20px;
+      top: -5px;
+      width: 200px;
+      padding: 5px 8px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 5px;
+      font-size: 12px;
+      z-index: 100;
+      pointer-events: none;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .panel {
+        padding: 10px;
+      }
+      
+      #dice-controls {
+        max-width: 95%;
+      }
+      
+      .dice-btn {
+        padding: 10px 15px;
+        font-size: 16px;
+      }
+      
+      #roll-result {
+        font-size: 28px;
+      }
+      
+      #history-panel {
+        width: 200px;
+      }
     }
   </style>
 </head>
 <body>
   <div id="dice-box"></div>
   
-  <div id="backdrop"></div>
-  
-  <div id="app-container">
-    <!-- Header with result display -->
-    <div id="header">
-      <div id="menu-btn">
-        <div></div>
-      </div>
-      <div id="result-display">
-        <div id="roll-result">-</div>
-        <div id="roll-details">Roll the dice</div>
-      </div>
-      <div style="width: 40px;"></div> <!-- Spacer for balance -->
-    </div>
-    
-    <!-- Main area for dice rolling -->
-    <div id="main-area"></div>
-    
-    <!-- Bottom dice controls -->
-    <div id="dice-controls">
-      <div class="dice-grid">
-        <button class="dice-btn" data-dice="d4">d4</button>
-        <button class="dice-btn" data-dice="d6">d6</button>
-        <button class="dice-btn" data-dice="d8">d8</button>
-        <button class="dice-btn" data-dice="d10">d10</button>
-        <button class="dice-btn" data-dice="d12">d12</button>
-        <button class="dice-btn" data-dice="d20">d20</button>
-        <button class="dice-btn" data-dice="d100">d100</button>
-        <button class="dice-btn" data-dice="2d6">2d6</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Menu Panel -->
-  <div id="menu-panel" class="slide-panel">
-    <div class="panel-header">
-      <h2 class="panel-title">Menu</h2>
-      <div class="close-panel"></div>
-    </div>
-    <ul>
-      <li>
-        <button id="custom-roll-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 19 7 19 17 12 22 5 17 5 7 12 2"></polygon>
-          </svg>
-          Custom Roll
-        </button>
-      </li>
-      <li>
-        <button id="skill-check-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
-          Skill Check
-        </button>
-      </li>
-      <li>
-        <button id="presets-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="8" y1="6" x2="21" y2="6"></line>
-            <line x1="8" y1="12" x2="21" y2="12"></line>
-            <line x1="8" y1="18" x2="21" y2="18"></line>
-            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-          </svg>
-          Presets
-        </button>
-      </li>
-      <li>
-        <button id="history-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          Roll History
-        </button>
-      </li>
-    </ul>
+  <!-- Results Panel -->
+  <div id="results-panel" class="panel">
+    <h3>Result</h3>
+    <div id="roll-result">-</div>
+    <div id="roll-details">Roll the dice to see results</div>
   </div>
   
   <!-- Custom Roll Panel -->
-  <div id="custom-roll-panel" class="slide-panel">
-    <div class="panel-header">
-      <h2 class="panel-title">Custom Roll</h2>
-      <div class="close-panel"></div>
-    </div>
-    <div class="form-group">
-      <label for="custom-dice-notation">Dice Notation (e.g., 2d20+1d6+5)</label>
-      <input type="text" id="custom-dice-notation" class="form-control" value="1d20" 
-             pattern="[0-9]*d[0-9]+([+-][0-9]*d[0-9]+)*([+-][0-9]+)*" inputmode="text">
-    </div>
-    <button id="roll-custom-btn" class="action-btn">Roll Dice</button>
-    
-    <div style="margin-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
-      <p style="color: #aaa; font-size: 14px;">Examples:</p>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="3d6">3d6</button>
-        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="1d20+5">1d20+5</button>
-        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="2d8+1d6">2d8+1d6</button>
-        <button class="preset-btn" style="font-size: 14px; padding: 10px;" data-notation="2d20kh1">2d20kh1 (Advantage)</button>
-      </div>
-    </div>
+  <div id="custom-roll-panel" class="panel">
+    <h3>Custom Roll</h3>
+    <input type="text" id="custom-dice-notation" placeholder="e.g., 2d20+1d6+5" value="1d20">
+    <button id="roll-custom-btn">Roll Custom</button>
   </div>
   
-  <!-- Skill Check Panel -->
-  <div id="skill-check-panel" class="slide-panel">
-    <div class="panel-header">
-      <h2 class="panel-title">D&D Skill Check</h2>
-      <div class="close-panel"></div>
+  <!-- D&D Skill Check Panel -->
+  <div id="skill-check-panel" class="panel">
+    <h3>D&D Skill Check</h3>
+    <div class="form-group">
+      <label for="skill-name">Skill:</label>
+      <input type="text" id="skill-name" value="Perception">
     </div>
     <div class="form-group">
-      <label for="skill-name">Skill Name</label>
-      <input type="text" id="skill-name" class="form-control" value="Perception">
+      <label for="skill-mod">Modifier:</label>
+      <input type="number" id="skill-mod" value="2">
+      <span class="tooltip" data-tip="Your character's skill modifier (e.g., Dexterity modifier + proficiency bonus)">?</span>
     </div>
     <div class="form-group">
-      <label for="skill-mod">Modifier</label>
-      <input type="number" id="skill-mod" class="form-control" value="2" inputmode="numeric">
+      <label for="difficulty-class">DC:</label>
+      <input type="number" id="difficulty-class" value="15">
+      <span class="tooltip" data-tip="Difficulty Class - the target number you need to meet or exceed to succeed">?</span>
     </div>
-    <div class="form-group">
-      <label for="difficulty-class">Difficulty Class (DC)</label>
-      <input type="number" id="difficulty-class" class="form-control" value="15" inputmode="numeric">
-    </div>
-    <div class="form-group">
-      <label for="advantage-type">Roll Type</label>
-      <select id="advantage-type" class="form-control">
-        <option value="normal">Normal Roll</option>
-        <option value="advantage">Advantage</option>
-        <option value="disadvantage">Disadvantage</option>
-      </select>
-    </div>
-    <button id="roll-skill-check-btn" class="action-btn">Roll Skill Check</button>
+    <button id="roll-skill-check-btn">Roll Skill Check</button>
   </div>
   
   <!-- Presets Panel -->
-  <div id="presets-panel" class="slide-panel">
-    <div class="panel-header">
-      <h2 class="panel-title">Dice Presets</h2>
-      <div class="close-panel"></div>
-    </div>
-    
-    <h3 style="margin-top: 0; color: #ccc; font-size: 16px;">Character Creation</h3>
+  <div id="presets-panel" class="panel">
+    <h3>Presets</h3>
     <button class="preset-btn" data-dice="4d6kh3">Ability Score (4d6, keep highest 3)</button>
-    <button class="preset-btn" data-dice="4d6kh3+4d6kh3+4d6kh3+4d6kh3+4d6kh3+4d6kh3">Full Character Stats (6 ability scores)</button>
-    
-    <h3 style="color: #ccc; font-size: 16px;">Combat Rolls</h3>
     <button class="preset-btn" data-dice="2d20kh1">Advantage (2d20, keep highest)</button>
     <button class="preset-btn" data-dice="2d20kl1">Disadvantage (2d20, keep lowest)</button>
-    <button class="preset-btn" data-dice="1d20+5">Attack Roll (+5)</button>
-    
-    <h3 style="color: #ccc; font-size: 16px;">Damage Rolls</h3>
-    <button class="preset-btn" data-dice="1d8+3">Longsword (+3)</button>
-    <button class="preset-btn" data-dice="2d6+5">Greatsword (+5)</button>
-    <button class="preset-btn" data-dice="1d8+2d6">Sneak Attack (1d8+2d6)</button>
     <button class="preset-btn" data-dice="8d6">Fireball (8d6)</button>
+    <button class="preset-btn" data-dice="2d6+5">Greatsword+5 (2d6+5)</button>
   </div>
   
-  <!-- History Panel -->
-  <div id="history-panel" class="slide-panel">
-    <div class="panel-header">
-      <h2 class="panel-title">Roll History</h2>
-      <div class="close-panel"></div>
-    </div>
-    <div id="history-content">
-      <!-- History items will be added here -->
-      <p>No rolls yet</p>
-    </div>
+  <!-- Main Dice Controls -->
+  <div id="dice-controls" class="panel">
+    <button class="dice-btn" data-dice="d4">d4</button>
+    <button class="dice-btn" data-dice="d6">d6</button>
+    <button class="dice-btn" data-dice="d8">d8</button>
+    <button class="dice-btn" data-dice="d10">d10</button>
+    <button class="dice-btn" data-dice="d12">d12</button>
+    <button class="dice-btn" data-dice="d20">d20</button>
+    <button class="dice-btn" data-dice="d100">d100</button>
   </div>
   
-  <!-- Result Modal -->
+  <!-- History Toggle Button -->
+  <div id="history-toggle">H</div>
+  
+  <!-- Roll History Panel -->
+  <div id="history-panel" class="panel">
+    <h3>Roll History</h3>
+    <div id="history-content"></div>
+  </div>
+  
+  <!-- Roll Result Modal -->
   <div id="result-modal"></div>
   <div id="particles-container"></div>
   
@@ -609,126 +434,100 @@
     
     // Initialize the 3D dice box
     const Box = new DiceBox("#dice-box", {
-      scale: 5,
-      throwForce: 5.5,
-      gravity: 2.5,
+      scale: 6,
+      throwForce: 6,
+      gravity: 2,
       spinForce: 5,
       lightIntensity: 0.8,
       shadowTransparency: 0.6,
-      theme: 'default',
-      createCanvas: true
+      theme: 'default'
     });
     
     // Initialize the box when the page loads
     Box.initialize().then(() => {
-      document.getElementById("roll-details").textContent = "Ready to roll";
+      document.getElementById("roll-details").textContent = "Dice ready! Click any button to roll.";
       console.log("Dice box initialized");
     }).catch(error => {
       console.error("Error initializing dice box:", error);
-      document.getElementById("roll-details").textContent = "Error loading dice";
+      document.getElementById("roll-details").textContent = "Error initializing dice. See console for details.";
     });
     
     // Roll history
     let rollHistory = [];
     const maxHistoryItems = 20;
     
-    // Panel state
-    let activePanel = null;
-    
     // Function to roll dice
     function rollDice(notation) {
-      // Close any open panels
-      closeAllPanels();
-      
       // Update display while rolling
       document.getElementById("roll-result").textContent = "Rolling...";
       document.getElementById("roll-details").textContent = notation;
       
-      // Roll the dice with a small delay to let the UI update
-      setTimeout(() => {
-        Box.roll(notation).then(results => {
-          console.log("Roll results:", results);
+      // Roll the dice
+      Box.roll(notation).then(results => {
+        console.log("Roll results:", results);
+        
+        // Process and display results
+        const total = results.total;
+        let breakdown = '';
+        
+        if (results.rolls && results.rolls.length > 0) {
+          breakdown = results.rolls.map(roll => {
+            return `${roll.dice}: [${roll.values.join(', ')}]`;
+          }).join(' + ');
           
-          // Process and display results
-          const total = results.total;
-          let breakdown = '';
-          
-          if (results.rolls && results.rolls.length > 0) {
-            breakdown = results.rolls.map(roll => {
-              return `${roll.dice}: [${roll.values.join(', ')}]`;
-            }).join(' + ');
-            
-            if (results.modifier) {
-              const modSign = results.modifier >= 0 ? '+' : '';
-              breakdown += ` ${modSign}${results.modifier}`;
-            }
+          if (results.modifier) {
+            const modSign = results.modifier >= 0 ? '+' : '';
+            breakdown += ` ${modSign}${results.modifier}`;
           }
-          
-          // Update display with results
-          document.getElementById("roll-result").textContent = total;
-          document.getElementById("roll-details").textContent = breakdown;
-          
-          // Add to history
-          addToHistory(notation, total, breakdown);
-        }).catch(error => {
-          console.error("Error rolling dice:", error);
-          document.getElementById("roll-result").textContent = "Error";
-          document.getElementById("roll-details").textContent = "Error rolling dice: " + error.message;
-        });
-      }, 100);
+        }
+        
+        // Update display with results
+        document.getElementById("roll-result").textContent = total;
+        document.getElementById("roll-details").textContent = breakdown;
+        
+        // Add to history
+        addToHistory(notation, total, breakdown);
+      }).catch(error => {
+        console.error("Error rolling dice:", error);
+        document.getElementById("roll-result").textContent = "Error";
+        document.getElementById("roll-details").textContent = "Error rolling dice: " + error.message;
+      });
     }
     
     // Function to perform a skill check
     function performSkillCheck() {
-      // Get values from form
       const skillName = document.getElementById("skill-name").value || "Check";
       const skillMod = parseInt(document.getElementById("skill-mod").value) || 0;
       const difficultyClass = parseInt(document.getElementById("difficulty-class").value) || 10;
-      const advantageType = document.getElementById("advantage-type").value;
       
-      // Close panels
-      closeAllPanels();
-      
-      // Determine dice notation based on advantage type
-      let notation;
-      switch (advantageType) {
-        case 'advantage':
-          notation = `2d20kh1+${skillMod}`;
-          break;
-        case 'disadvantage':
-          notation = `2d20kl1+${skillMod}`;
-          break;
-        default:
-          notation = `1d20+${skillMod}`;
-      }
+      // Construct dice notation
+      const notation = `1d20+${skillMod}`;
       
       // Update display
       document.getElementById("roll-result").textContent = "Rolling...";
       document.getElementById("roll-details").textContent = `${skillName} check (DC ${difficultyClass})`;
       
-      // Roll with a small delay to let the UI update
-      setTimeout(() => {
-        Box.roll(notation).then(results => {
-          const total = results.total;
-          const passed = total >= difficultyClass;
-          
-          // Update display
-          document.getElementById("roll-result").textContent = total;
-          document.getElementById("roll-details").textContent = 
-            `${skillName} check (DC ${difficultyClass}): ${passed ? 'SUCCESS' : 'FAILURE'}`;
-          
-          // Show success/failure animation
-          showResultModal(passed, total, difficultyClass);
-          
-          // Add to history
-          addToHistory(`${skillName} (DC ${difficultyClass})`, total, 
-                        passed ? "Success" : "Failure");
-        }).catch(error => {
-          console.error("Error rolling dice:", error);
-          document.getElementById("roll-result").textContent = "Error";
-          document.getElementById("roll-details").textContent = "Error rolling dice: " + error.message;
-        });
-      }, 100);
+      // Roll the dice
+      Box.roll(notation).then(results => {
+        const total = results.total;
+        const passed = total >= difficultyClass;
+        
+        // Update display
+        document.getElementById("roll-result").textContent = total;
+        document.getElementById("roll-details").textContent = 
+          `${skillName} check (DC ${difficultyClass}): ${passed ? 'SUCCESS' : 'FAILURE'}`;
+        
+        // Show success/failure animation
+        showResultModal(passed, total, difficultyClass);
+        
+        // Add to history
+        addToHistory(`${skillName} (DC ${difficultyClass})`, total, 
+                      passed ? "Success" : "Failure");
+      }).catch(error => {
+        console.error("Error rolling dice:", error);
+        document.getElementById("roll-result").textContent = "Error";
+        document.getElementById("roll-details").textContent = "Error rolling dice: " + error.message;
+      });
     }
     
     // Function to show success/failure modal with animation
@@ -766,8 +565,8 @@
     function createParticles(passed, container) {
       // Define colors based on success/failure
       const colors = passed ?
-        ['#2ecc71', '#27ae60', '#a9dfbf'] :
-        ['#e74c3c', '#c0392b', '#f5b7b1'];
+        ['#2ecc71', '#27ae60', '#a9dfbf', '#7dcea0', '#1abc9c'] :
+        ['#e74c3c', '#c0392b', '#f5b7b1', '#cd6155', '#e67e22'];
       
       // Create a style element for keyframes
       const styleSheet = document.createElement("style");
@@ -775,12 +574,12 @@
       
       let keyframesCSS = "";
       
-      // Create fewer particles for mobile
-      for (let i = 0; i < 30; i++) {
+      // Create particles
+      for (let i = 0; i < 40; i++) {
         const particle = document.createElement("div");
         
         // Random size
-        const size = Math.random() * 30 + 5;
+        const size = Math.random() * 40 + 10;
         
         // Set styles
         particle.style.position = "absolute";
@@ -794,7 +593,7 @@
         
         // Random end position
         const angle = Math.random() * Math.PI * 2;
-        const distance = 80 + Math.random() * 150; // Smaller distance for mobile
+        const distance = 100 + Math.random() * 300;
         const endX = Math.cos(angle) * distance;
         const endY = Math.sin(angle) * distance;
         
@@ -809,4 +608,222 @@
         keyframesCSS += `
           @keyframes particle-${i} {
             0% {
-              transform: translate(-50%,
+              transform: translate(-50%, -50%) scale(1);
+              opacity: ${Math.random() * 0.7 + 0.3};
+            }
+            100% {
+              transform: translate(calc(-50% + ${endX}px), calc(-50% + ${endY}px)) scale(0);
+              opacity: 0;
+            }
+          }
+        `;
+        
+        // Add particle to container
+        container.appendChild(particle);
+      }
+      
+      // Add central glow
+      const glow = document.createElement("div");
+      glow.style.position = "absolute";
+      glow.style.width = "150px";
+      glow.style.height = "150px";
+      glow.style.borderRadius = "50%";
+      glow.style.backgroundColor = "transparent";
+      glow.style.boxShadow = passed ?
+        "0 0 80px 40px rgba(46, 204, 113, 0.8)" :
+        "0 0 80px 40px rgba(231, 76, 60, 0.8)";
+      glow.style.top = "50%";
+      glow.style.left = "50%";
+      glow.style.transform = "translate(-50%, -50%)";
+      glow.style.animation = "glow-fade 1.5s ease-out forwards";
+      
+      keyframesCSS += `
+        @keyframes glow-fade {
+          0% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(0.8);
+          }
+          100% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.5);
+          }
+        }
+      `;
+      
+      container.appendChild(glow);
+      
+      // Add keyframes to stylesheet
+      styleSheet.textContent = keyframesCSS;
+      
+      // Clean up after animations complete
+      setTimeout(() => {
+        container.innerHTML = "";
+        document.head.removeChild(styleSheet);
+      }, 3000);
+    }
+    
+    // Function to add a roll to history
+    function addToHistory(notation, result, details) {
+      // Create history item
+      const historyItem = {
+        notation: notation,
+        result: result,
+        details: details,
+        timestamp: new Date()
+      };
+      
+      // Add to history array
+      rollHistory.unshift(historyItem);
+      
+      // Limit history size
+      if (rollHistory.length > maxHistoryItems) {
+        rollHistory.pop();
+      }
+      
+      // Update history display
+      updateHistoryDisplay();
+    }
+    
+    // Function to update history display
+    function updateHistoryDisplay() {
+      const historyContent = document.getElementById("history-content");
+      historyContent.innerHTML = "";
+      
+      if (rollHistory.length === 0) {
+        historyContent.innerHTML = "<p>No rolls yet</p>";
+        return;
+      }
+      
+      // Create elements for each history item
+      rollHistory.forEach(item => {
+        const historyItem = document.createElement("div");
+        historyItem.className = "history-item";
+        
+        const time = new Date(item.timestamp).toLocaleTimeString();
+        
+        historyItem.innerHTML = `
+          <div class="history-time">${time}</div>
+          <div>
+            <span class="history-roll">${item.notation}</span>
+            <span class="history-result">${item.result}</span>
+          </div>
+          <div class="history-details">${item.details}</div>
+        `;
+        
+        historyContent.appendChild(historyItem);
+      });
+    }
+    
+    // Set up event listeners
+    document.addEventListener("DOMContentLoaded", () => {
+      // Basic dice buttons
+      document.querySelectorAll(".dice-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const dice = button.getAttribute("data-dice");
+          rollDice(dice);
+        });
+      });
+      
+      // Custom roll button
+      document.getElementById("roll-custom-btn").addEventListener("click", () => {
+        const notation = document.getElementById("custom-dice-notation").value;
+        if (notation.trim()) {
+          rollDice(notation);
+        }
+      });
+      
+      // Skill check button
+      document.getElementById("roll-skill-check-btn").addEventListener("click", performSkillCheck);
+      
+      // Preset buttons
+      document.querySelectorAll(".preset-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const dice = button.getAttribute("data-dice");
+          rollDice(dice);
+        });
+      });
+      
+      // History toggle
+      document.getElementById("history-toggle").addEventListener("click", () => {
+        const historyPanel = document.getElementById("history-panel");
+        const historyToggle = document.getElementById("history-toggle");
+        
+        historyPanel.classList.toggle("visible");
+        historyToggle.classList.toggle("active");
+        
+        // Update history if opening
+        if (historyPanel.classList.contains("visible")) {
+          updateHistoryDisplay();
+        }
+      });
+      
+      // Enter key in custom dice input
+      document.getElementById("custom-dice-notation").addEventListener("keyup", (event) => {
+        if (event.key === "Enter") {
+          const notation = document.getElementById("custom-dice-notation").value;
+          if (notation.trim()) {
+            rollDice(notation);
+          }
+        }
+      });
+    });
+    
+    // Also attach event listeners immediately in case DOMContentLoaded already fired
+    // Basic dice buttons
+    document.querySelectorAll(".dice-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const dice = button.getAttribute("data-dice");
+        rollDice(dice);
+      });
+    });
+    
+    // Custom roll button
+    document.getElementById("roll-custom-btn").addEventListener("click", () => {
+      const notation = document.getElementById("custom-dice-notation").value;
+      if (notation.trim()) {
+        rollDice(notation);
+      }
+    });
+    
+    // Skill check button
+    document.getElementById("roll-skill-check-btn").addEventListener("click", performSkillCheck);
+    
+    // Preset buttons
+    document.querySelectorAll(".preset-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        const dice = button.getAttribute("data-dice");
+        rollDice(dice);
+      });
+    });
+    
+    // History toggle
+    document.getElementById("history-toggle").addEventListener("click", () => {
+      const historyPanel = document.getElementById("history-panel");
+      const historyToggle = document.getElementById("history-toggle");
+      
+      historyPanel.classList.toggle("visible");
+      historyToggle.classList.toggle("active");
+      
+      // Update history if opening
+      if (historyPanel.classList.contains("visible")) {
+        updateHistoryDisplay();
+      }
+    });
+    
+    // Enter key in custom dice input
+    document.getElementById("custom-dice-notation").addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+        const notation = document.getElementById("custom-dice-notation").value;
+        if (notation.trim()) {
+          rollDice(notation);
+        }
+      }
+    });
+    
+    // Roll a d20 automatically when loaded to demonstrate
+    setTimeout(() => {
+      rollDice("1d20");
+    }, 1000);
+  </script>
+</body>
+</html>
