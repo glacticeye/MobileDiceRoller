@@ -6,179 +6,299 @@
   <title>Mobile Dice Roller</title>
   <link rel="stylesheet" href="./src/styles.css">
 </head>
-<body>
-  <div id="dice-box"></div>
-  
-  <div id="app-container">
-    <!-- Header with result display -->
-    <div id="header">
-      <div style="width: 40px;"></div> <!-- Spacer for balance -->
-      <div id="result-display">
-        <div id="roll-result">-</div>
-        <div id="roll-details">Roll the dice</div>
+  <body>
+    <div id="dice-box"></div>
+    
+    <div id="app-container">
+      <!-- Header with result display -->
+      <div id="header">
+        <div style="width: 40px;"></div> <!-- Spacer for balance -->
+        <div id="result-display">
+          <div id="roll-result">-</div>
+          <div id="roll-details">Roll the dice</div>
+        </div>
+        <div style="width: 40px;"></div> <!-- Spacer for balance -->
       </div>
-      <div style="width: 40px;"></div> <!-- Spacer for balance -->
+      
+      <!-- Main area for dice rolling -->
+      <div id="main-area"></div>
+      
+      <!-- Bottom dice controls -->
+      <div id="dice-controls">
+        <div class="dice-grid">
+          <button class="dice-btn" id="roll-d4">d4</button>
+          <button class="dice-btn" id="roll-d6">d6</button>
+          <button class="dice-btn" id="roll-d8">d8</button>
+          <button class="dice-btn" id="roll-d10">d10</button>
+          <button class="dice-btn" id="roll-d12">d12</button>
+          <button class="dice-btn" id="roll-d20">d20</button>
+          <button class="dice-btn" id="roll-d100">%</button>
+        </div>
+      </div>
     </div>
     
-    <!-- Main area for dice rolling -->
-    <div id="main-area"></div>
+    <!-- Result Modal -->
+    <div id="result-modal"></div>
+    <div id="particles-container"></div>
     
-    <!-- Bottom dice controls -->
-    <div id="dice-controls">
-      <div class="dice-grid">
-        <button class="dice-btn" id="roll-d4">d4</button>
-        <button class="dice-btn" id="roll-d6">d6</button>
-        <button class="dice-btn" id="roll-d8">d8</button>
-        <button class="dice-btn" id="roll-d10">d10</button>
-        <button class="dice-btn" id="roll-d12">d12</button>
-        <button class="dice-btn" id="roll-d20">d20</button>
-        <button class="dice-btn" id="roll-d100">%</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Result Modal -->
-  <div id="result-modal"></div>
-  <div id="particles-container"></div>
-  
-  <script type="module">
-    // Import the dice box library
-    import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";
-    
-    // Initialize the 3D dice box
-    const Box = new DiceBox("#dice-box", {
-      assetPath: "assets/",
-      framerate: (1/60),
-      sounds: true,
-      volume: 100,
-      color_spotlight: 0xefdfd5,
-      shadows: true,
-      theme_surface: "green-felt",
-      sound_dieMaterial: 'plastic',
-      //  theme_customColorset: {
-      //  background: "#00ffcb",
-      //  foreground: "#00ffcb",
-      //  texture: "ice", // marble | ice
-      //  material: "wood" // metal | glass | plastic | wood
-      // },
-      theme_colorset: "radiant", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
-      theme_texture: "marble", // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
-      //  theme_material: "perfectmetal", // "none" | "metal" | "wood" | "glass" | "plastic"
-      gravity_multiplier: 200,
-      light_intensity: 1,
-      baseScale: 100,
-      strength: 1.5, // toss strength of dice
-      onRollComplete: () => {},
-      onAddDiceComplete: () => {
-      },
-      onRemoveDiceComplete: () => {
-      }
-    });
-    
-    // Variables to store DOM elements
-    let rollResult;
-    let rollDetails;
-    
-    // Initialize the box when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log("DOM loaded, initializing dice box...");
+    <script type="module">
+      // Import the dice box library
+      import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";
       
-      rollResult = document.getElementById("roll-result");
-      rollDetails = document.getElementById("roll-details");
-      
-      Box.initialize().then(() => {
-        rollDetails.textContent = "Ready to roll";
-        console.log("Dice box initialized");
-      }).catch(error => {
-        console.error("Error initializing dice box:", error);
-        rollDetails.textContent = "Error loading dice";
+      // Initialize the 3D dice box
+      const Box = new DiceBox("#dice-box", {
+        assetPath: "assets/",
+        framerate: (1/60),
+        sounds: true,
+        volume: 100,
+        color_spotlight: 0xefdfd5,
+        shadows: true,
+        theme_surface: "green-felt",
+        sound_dieMaterial: 'plastic',
+        //  theme_customColorset: {
+        //  background: "#00ffcb",
+        //  foreground: "#00ffcb",
+        //  texture: "ice", // marble | ice
+        //  material: "wood" // metal | glass | plastic | wood
+        // },
+        theme_colorset: "radiant", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
+        theme_texture: "marble", // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
+        //  theme_material: "perfectmetal", // "none" | "metal" | "wood" | "glass" | "plastic"
+        gravity_multiplier: 200,
+        light_intensity: 1,
+        baseScale: 100,
+        strength: 1.5, // toss strength of dice
+        onRollComplete: () => {},
+        onAddDiceComplete: () => {
+        },
+        onRemoveDiceComplete: () => {
+        }
       });
       
-      // Set up event listeners
-      setupEventListeners();
-    });
-    
-    // Function to set up event listeners
-    function setupEventListeners() {
-      // Basic dice roll buttons
-      document.getElementById("roll-d4").addEventListener("click", () => {
-        rollDice("1d4");
+      // Variables to store DOM elements
+      let rollResult;
+      let rollDetails;
+      
+      // Initialize the box when the page loads
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log("DOM loaded, initializing dice box...");
+        
+        rollResult = document.getElementById("roll-result");
+        rollDetails = document.getElementById("roll-details");
+        
+        Box.initialize().then(() => {
+          rollDetails.textContent = "Ready to roll";
+          console.log("Dice box initialized");
+        }).catch(error => {
+          console.error("Error initializing dice box:", error);
+          rollDetails.textContent = "Error loading dice";
+        });
+        
+        // Set up event listeners
+        setupEventListeners();
       });
       
-      document.getElementById("roll-d6").addEventListener("click", () => {
-        rollDice("1d6");
-      });
-      
-      document.getElementById("roll-d8").addEventListener("click", () => {
-        rollDice("1d8");
-      });
-      
-      document.getElementById("roll-d10").addEventListener("click", () => {
-        rollDice("1d10");
-      });
-      
-      document.getElementById("roll-d12").addEventListener("click", () => {
-        rollDice("1d12");
-      });
-      
-      document.getElementById("roll-d20").addEventListener("click", () => {
-        rollDice("1d20");
-      });
-      
-      document.getElementById("roll-d100").addEventListener("click", () => {
-        rollDice("1d10+1d100");
-      });
-      
-      console.log("Event listeners set up");
-    }
-    
-    // Function to roll dice
-    function rollDice(notation) {
-      // Check if box is initialized
-      if (!Box) {
-        console.error("Dice box not initialized");
-        return;
+      // Function to set up event listeners
+      function setupEventListeners() {
+        // Basic dice roll buttons
+        document.getElementById("roll-d4").addEventListener("click", () => {
+          rollDice("1d4");
+        });
+        
+        document.getElementById("roll-d6").addEventListener("click", () => {
+          rollDice("1d6");
+        });
+        
+        document.getElementById("roll-d8").addEventListener("click", () => {
+          rollDice("1d8");
+        });
+        
+        document.getElementById("roll-d10").addEventListener("click", () => {
+          rollDice("1d10");
+        });
+        
+        document.getElementById("roll-d12").addEventListener("click", () => {
+          rollDice("1d12");
+        });
+        
+        document.getElementById("roll-d20").addEventListener("click", () => {
+          rollDice("1d20");
+        });
+        
+        document.getElementById("roll-d100").addEventListener("click", () => {
+          rollDice("1d10+1d100");
+        });
+        
+        console.log("Event listeners set up");
       }
       
-      // Get DOM elements if not already set
-      if (!rollResult) rollResult = document.getElementById("roll-result");
-      if (!rollDetails) rollDetails = document.getElementById("roll-details");
-      
-      // Update display while rolling
-      rollResult.textContent = "Rolling...";
-      rollDetails.textContent = notation;
-      
-      console.log("Rolling dice:", notation);
-      
-      // Roll the dice
-      Box.roll(notation).then(results => {
-        console.log("Roll results:", results);
-        
-        // Process and display results
-        const total = results.total;
-        let breakdown = '';
-        
-        if (results.rolls && results.rolls.length > 0) {
-          breakdown = results.rolls.map(roll => {
-            return `${roll.dice}: [${roll.values.join(', ')}]`;
-          }).join(' + ');
-          
-          if (results.modifier) {
-            const modSign = results.modifier >= 0 ? '+' : '';
-            breakdown += ` ${modSign}${results.modifier}`;
-          }
+      // Function to roll dice
+      function rollDice(notation) {
+        // Check if box is initialized
+        if (!Box) {
+          console.error("Dice box not initialized");
+          return;
         }
         
-        // Update display with results
-        rollResult.textContent = total;
-        rollDetails.textContent = breakdown || notation;
+        // Get DOM elements if not already set
+        if (!rollResult) rollResult = document.getElementById("roll-result");
+        if (!rollDetails) rollDetails = document.getElementById("roll-details");
         
-      }).catch(error => {
-        console.error("Error rolling dice:", error);
-        rollResult.textContent = "Error";
-        rollDetails.textContent = "Error rolling dice";
+        // Update display while rolling
+        rollResult.textContent = "Rolling...";
+        rollDetails.textContent = notation;
+        
+        console.log("Rolling dice:", notation);
+        
+        // Roll the dice
+        Box.roll(notation).then(results => {
+          console.log("Roll results:", results);
+          
+          // Process and display results
+          const total = results.total;
+          let breakdown = '';
+          
+          if (results.rolls && results.rolls.length > 0) {
+            breakdown = results.rolls.map(roll => {
+              return `${roll.dice}: [${roll.values.join(', ')}]`;
+            }).join(' + ');
+            
+            if (results.modifier) {
+              const modSign = results.modifier >= 0 ? '+' : '';
+              breakdown += ` ${modSign}${results.modifier}`;
+            }
+          }
+          
+          // Update display with results
+          rollResult.textContent = total;
+          rollDetails.textContent = breakdown || notation;
+          
+        }).catch(error => {
+          console.error("Error rolling dice:", error);
+          rollResult.textContent = "Error";
+          rollDetails.textContent = "Error rolling dice";
+        });
+      }
+
+        // Add settings button to the header
+      document.addEventListener('DOMContentLoaded', () => {
+        // Create settings button
+        const settingsBtn = document.createElement('button');
+        settingsBtn.id = 'settings-btn';
+        settingsBtn.innerHTML = '⚙️';
+        settingsBtn.style.cssText = `
+          background: none;
+          border: none;
+          color: white;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 5px;
+        `;
+        
+        // Add settings button to header
+        const header = document.getElementById('header');
+        const spacer = header.querySelector('div[style="width: 40px;"]');
+        header.replaceChild(settingsBtn, spacer);
+        
+        // Add event listener to open settings page
+        settingsBtn.addEventListener('click', () => {
+          window.location.href = 'settings.html';
+        });
+        
+        // Load settings from localStorage
+        loadDiceSettings();
+        
+        // Listen for settings changes
+        window.addEventListener('diceSettingsChanged', (event) => {
+          applyDiceSettings(event.detail);
+        });
       });
-    }
-  </script>
-</body>
+
+      // Function to load and apply dice settings
+      function loadDiceSettings() {
+        try {
+          const savedSettings = localStorage.getItem('diceSettings');
+          if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            applyDiceSettings(settings);
+          }
+        } catch (e) {
+          console.error('Error loading dice settings:', e);
+        }
+      }
+
+      // Function to apply dice settings to the DiceBox
+      function applyDiceSettings(settings) {
+        if (!Box) {
+          console.error('Dice box not initialized');
+          return;
+        }
+        
+        // Apply colorset
+        if (settings.colorset) {
+          Box.updateConfig({
+            theme_colorset: settings.colorset
+          });
+        }
+        
+        // Apply texture
+        if (settings.texture) {
+          Box.updateConfig({
+            theme_texture: settings.texture
+          });
+        }
+        
+        // Apply material
+        if (settings.material && settings.material !== 'none') {
+          Box.updateConfig({
+            theme_material: settings.material
+          });
+        }
+        
+        // Apply surface
+        if (settings.surface) {
+          Box.updateConfig({
+            theme_surface: settings.surface
+          });
+        }
+        
+        // Apply gravity
+        if (settings.gravity) {
+          Box.updateConfig({
+            gravity_multiplier: settings.gravity
+          });
+        }
+        
+        // Apply toss strength
+        if (settings.strength) {
+          Box.updateConfig({
+            strength: settings.strength
+          });
+        }
+        
+        // Apply volume
+        if (settings.volume !== undefined) {
+          Box.updateConfig({
+            volume: settings.volume
+          });
+        }
+        
+        // Apply shadows
+        if (settings.shadows !== undefined) {
+          Box.updateConfig({
+            shadows: settings.shadows
+          });
+        }
+        
+        // Apply sounds
+        if (settings.sounds !== undefined) {
+          Box.updateConfig({
+            sounds: settings.sounds
+          });
+        }
+        
+        console.log('Applied dice settings:', settings);
+      }
+    </script>
+  </body>
 </html>
