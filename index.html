@@ -25,7 +25,7 @@
     /* Dice rolling area */
     #dice-box {
       width: 100%;
-      height: 100%;
+      height: 85%;
       position: absolute;
       top: 0;
       left: 0;
@@ -50,7 +50,7 @@
       padding: 10px;
       background: rgba(0, 0, 0, 0.7);
       height: 60px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
     }
     
     #result-display {
@@ -118,50 +118,6 @@
     .dice-btn:active {
       transform: translateY(2px);
       background: #2980b9;
-    }
-
-    /* Result Modal Styles */
-    #result-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      z-index: 10;
-      font-size: 2.5rem;
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-      transition: transform 0.3s ease-out;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    #result-modal.show {
-      transform: translate(-50%, -50%) scale(1);
-      animation: pulse 1.5s infinite alternate;
-    }
-
-    .passed {
-      color: #2ecc71;
-      text-shadow: 0 0 20px rgba(46, 204, 113, 0.8);
-    }
-
-    .failed {
-      color: #e74c3c;
-      text-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
-    }
-
-    #particles-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9;
     }
 
     @keyframes pulse {
@@ -295,8 +251,7 @@
         <button class="dice-btn" id="roll-d10">d10</button>
         <button class="dice-btn" id="roll-d12">d12</button>
         <button class="dice-btn" id="roll-d20">d20</button>
-        <button class="dice-btn" id="roll-d100">d100</button>
-        <button class="dice-btn" id="roll-2d6">2d6</button>
+        <button class="dice-btn" id="roll-d100">%</button>
       </div>
     </div>
   </div>
@@ -311,13 +266,31 @@
     
     // Initialize the 3D dice box
     const Box = new DiceBox("#dice-box", {
-      scale: 5,
-      throwForce: 5,
-      gravity: 2,
-      spinForce: 5,
-      lightIntensity: 0.8,
-      shadowTransparency: 0.6,
-      theme: 'default'
+      framerate: (1/60),
+      sounds: true,
+      volume: 100,
+      color_spotlight: 0xefdfd5,
+      shadows: true,
+      theme_surface: "stainless",
+      sound_dieMaterial: 'plastic',
+      theme_customColorset: {
+        background: "#00ffcb",
+        foreground: "#ffffff",
+        texture: "ice", // marble | ice
+        material: "metal" // metal | glass | plastic | wood
+      },
+      // theme_colorset: "radiant", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
+      // theme_texture: "marble", // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
+      // theme_material: "metal", // "none" | "metal" | "wood" | "glass" | "plastic"
+      gravity_multiplier: 400,
+      light_intensity: 1,
+      baseScale: 100,
+      strength: 1.5, // toss strength of dice
+      onRollComplete: () => {},
+      onAddDiceComplete: () => {
+      },
+      onRemoveDiceComplete: () => {
+      }
     });
     
     // Variables to store DOM elements
@@ -371,11 +344,7 @@
       });
       
       document.getElementById("roll-d100").addEventListener("click", () => {
-        rollPercentile();
-      });
-      
-      document.getElementById("roll-2d6").addEventListener("click", () => {
-        rollDice("2d6");
+        rollDice("1d10+1d100");
       });
       
       console.log("Event listeners set up");
@@ -426,69 +395,6 @@
         console.error("Error rolling dice:", error);
         rollResult.textContent = "Error";
         rollDetails.textContent = "Error rolling dice";
-      });
-    }
-    
-    // Function to roll percentile dice (d100)
-    function rollPercentile() {
-      // Check if box is initialized
-      if (!Box) {
-        console.error("Dice box not initialized");
-        return;
-      }
-      
-      // Get DOM elements if not already set
-      if (!rollResult) rollResult = document.getElementById("roll-result");
-      if (!rollDetails) rollDetails = document.getElementById("roll-details");
-      
-      // Update display while rolling
-      rollResult.textContent = "Rolling...";
-      rollDetails.textContent = "Percentile (d100 + d10)";
-      
-      console.log("Rolling percentile dice");
-      
-      // Roll d100 and d10 separately
-      Box.roll("1d100+1d10").then(results => {
-        console.log("Percentile roll results:", results);
-        
-        // Get the d100 and d10 values
-        let tensValue = 0;
-        let onesValue = 0;
-        
-        if (results.rolls && results.rolls.length === 2) {
-          // The first roll is the d100 (tens place - 00 to 90)
-          tensValue = results.rolls[0].values[0];
-          // The second roll is the d10 (ones place - 0 to 9)
-          onesValue = results.rolls[1].values[0];
-          
-          // Convert d100 result to tens digit (00, 10, 20, etc.)
-          tensValue = Math.floor((tensValue - 1) / 10) * 10;
-          
-          // Special case: if d100 shows "100", treat it as "00"
-          if (tensValue === 90 && results.rolls[0].values[0] === 100) {
-            tensValue = 0;
-          }
-        }
-        
-        // Calculate the final percentile result
-        let percentileResult = tensValue + onesValue;
-        
-        // Special case: 00 + 0 = 100
-        if (percentileResult === 0) {
-          percentileResult = 100;
-        }
-        
-        // Create breakdown text
-        const breakdown = `d100: [${results.rolls[0].values[0]}] + d10: [${results.rolls[1].values[0]}]`;
-        
-        // Update display with results
-        rollResult.textContent = percentileResult;
-        rollDetails.textContent = `Percentile: ${breakdown} = ${percentileResult}`;
-        
-      }).catch(error => {
-        console.error("Error rolling percentile dice:", error);
-        rollResult.textContent = "Error";
-        rollDetails.textContent = "Error rolling percentile dice";
       });
     }
   </script>
