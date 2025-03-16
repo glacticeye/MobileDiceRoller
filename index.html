@@ -56,22 +56,44 @@
     // Import the dice box library
     import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";
     
-    // Initialize the 3D dice box
+    let settings = {
+      colorset: 'radiant',
+      texture: 'marble',
+      material: 'plastic',
+      surface: 'green-felt',
+      gravity: 200,
+      strength: 1.5,
+      volume: 100,
+      shadows: true,
+      sounds: true
+    };
+    
+    // Try to load saved settings from localStorage
+    try {
+      const savedSettings = localStorage.getItem('diceSettings');
+      if (savedSettings) {
+        settings = {...settings, ...JSON.parse(savedSettings)};
+      }
+    } catch (e) {
+      console.error('Error loading saved settings:', e);
+    }
+    
+    // Initialize the 3D dice box with the settings
     const Box = new DiceBox("#dice-box", {
       assetPath: "assets/",
       framerate: (1/60),
-      sounds: true,
-      volume: 100,
+      sounds: settings.sounds,
+      volume: settings.volume,
       color_spotlight: 0xefdfd5,
-      shadows: true,
-      // theme_surface: "green-felt",
-      // sound_dieMaterial: 'plastic',
-      // theme_colorset: "radiant",
-      // theme_texture: "marble",
-      gravity_multiplier: 200,
+      shadows: settings.shadows,
+      theme_surface: settings.surface,
+      sound_dieMaterial: settings.material,
+      theme_colorset: settings.colorset,
+      theme_texture: settings.texture,
+      gravity_multiplier: settings.gravity,
       light_intensity: 1,
       baseScale: 100,
-      strength: 1.5,
+      strength: settings.strength,
       onRollComplete: () => {},
       onAddDiceComplete: () => {},
       onRemoveDiceComplete: () => {}
