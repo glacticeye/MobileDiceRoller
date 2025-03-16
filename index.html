@@ -21,18 +21,29 @@
     </div>
     
     <!-- Main area for dice rolling -->
-    <div id="main-area"></div>
+    <div id="main-area">
+      <!-- Selection information will appear here -->
+      <div id="dice-selection-display">
+        <div id="selection-container"></div>
+      </div>
+    </div>
     
     <!-- Bottom dice controls -->
     <div id="dice-controls">
       <div class="dice-grid">
-        <button class="dice-btn" id="roll-d4">d4</button>
-        <button class="dice-btn" id="roll-d6">d6</button>
-        <button class="dice-btn" id="roll-d8">d8</button>
-        <button class="dice-btn" id="roll-d10">d10</button>
-        <button class="dice-btn" id="roll-d12">d12</button>
-        <button class="dice-btn" id="roll-d20">d20</button>
-        <button class="dice-btn" id="roll-d100">%</button>
+        <button class="dice-btn" id="roll-d4">d4 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d6">d6 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d8">d8 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d10">d10 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d12">d12 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d20">d20 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d100">d100 <span class="dice-count">0</span></button>
+      </div>
+      
+      <!-- Roll and Clear buttons -->
+      <div class="action-buttons">
+        <button id="clear-btn">Clear</button>
+        <button id="roll-btn">Roll</button>
       </div>
     </div>
   </div>
@@ -55,27 +66,97 @@
       shadows: true,
       theme_surface: "green-felt",
       sound_dieMaterial: 'plastic',
-      //  theme_customColorset: {
-      //  background: "#00ffcb",
-      //  foreground: "#00ffcb",
-      //  texture: "ice", // marble | ice
-      //  material: "wood" // metal | glass | plastic | wood
-      // },
-      theme_colorset: "radiant", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
-      theme_texture: "marble", // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
-      //  theme_material: "perfectmetal", // "none" | "metal" | "wood" | "glass" | "plastic"
+      theme_colorset: "radiant",
+      theme_texture: "marble",
       gravity_multiplier: 200,
       light_intensity: 1,
       baseScale: 100,
-      strength: 1.5, // toss strength of dice
+      strength: 1.5,
       onRollComplete: () => {},
       onAddDiceComplete: () => {},
       onRemoveDiceComplete: () => {}
     });
     
-    // Variables to store DOM elements
+    // Variables to store DOM elements and dice counts
     let rollResult;
     let rollDetails;
+    let selectionContainer;
+    const diceSelections = {
+      d4: 0,
+      d6: 0,
+      d8: 0,
+      d10: 0,
+      d12: 0,
+      d20: 0,
+      d100: 0
+    };
+    
+    // Helper function to update the dice selection display
+    function updateSelectionDisplay() {
+      selectionContainer.innerHTML = '';
+      
+      // Check if any dice are selected
+      const hasSelections = Object.values(diceSelections).some(count => count > 0);
+      
+      if (hasSelections) {
+        // Create a string representation of the selection
+        const selections = [];
+        for (const [type, count] of Object.entries(diceSelections)) {
+          if (count > 0) {
+            selections.push(`${count}${type}`);
+          }
+        }
+        
+        // Create and append the selection text
+        const selectionText = document.createElement('div');
+        selectionText.className = 'selection-text';
+        selectionText.textContent = selections.join(' + ');
+        selectionContainer.appendChild(selectionText);
+      } else {
+        // If no dice are selected, display a prompt
+        const noSelectionText = document.createElement('div');
+        noSelectionText.className = 'no-selection-text';
+        noSelectionText.textContent = 'Select dice to roll';
+        selectionContainer.appendChild(noSelectionText);
+      }
+      
+      // Update all dice count displays
+      for (const type of Object.keys(diceSelections)) {
+        const countElement = document.querySelector(`#roll-${type} .dice-count`);
+        if (countElement) {
+          countElement.textContent = diceSelections[type];
+          
+          // Highlight buttons with selections
+          const button = document.getElementById(`roll-${type}`);
+          if (diceSelections[type] > 0) {
+            button.classList.add('has-selection');
+          } else {
+            button.classList.remove('has-selection');
+          }
+        }
+      }
+      
+      // Show/hide the roll button based on selections
+      const rollButton = document.getElementById('roll-btn');
+      if (hasSelections) {
+        rollButton.classList.add('active');
+      } else {
+        rollButton.classList.remove('active');
+      }
+    }
+    
+    // Function to format the notation for dice rolling
+    function formatDiceNotation() {
+      const notations = [];
+      
+      for (const [type, count] of Object.entries(diceSelections)) {
+        if (count > 0) {
+          notations.push(`${count}${type}`);
+        }
+      }
+      
+      return notations.join('+');
+    }
     
     // Initialize the box when the page loads
     document.addEventListener('DOMContentLoaded', () => {
@@ -83,6 +164,7 @@
       
       rollResult = document.getElementById("roll-result");
       rollDetails = document.getElementById("roll-details");
+      selectionContainer = document.getElementById("selection-container");
       
       Box.initialize().then(() => {
         rollDetails.textContent = "Ready to roll";
@@ -98,6 +180,9 @@
       // Set up settings button
       setupSettingsButton();
       
+      // Initialize the selection display
+      updateSelectionDisplay();
+      
       // Load settings from localStorage
       loadDiceSettings();
       
@@ -111,33 +196,41 @@
     
     // Function to set up event listeners
     function setupEventListeners() {
-      // Basic dice roll buttons
-      document.getElementById("roll-d4").addEventListener("click", () => {
-        rollDice("1d4");
+      // Dice selection buttons
+      const diceButtons = document.querySelectorAll(".dice-btn");
+      diceButtons.forEach(button => {
+        const diceType = button.id.replace('roll-', '');
+        
+        button.addEventListener("click", () => {
+          // Increment the count for this dice type
+          diceSelections[diceType]++;
+          
+          // Update the display
+          updateSelectionDisplay();
+        });
       });
       
-      document.getElementById("roll-d6").addEventListener("click", () => {
-        rollDice("1d6");
+      // Roll button
+      document.getElementById("roll-btn").addEventListener("click", () => {
+        const notation = formatDiceNotation();
+        if (notation) {
+          rollDice(notation);
+        }
       });
       
-      document.getElementById("roll-d8").addEventListener("click", () => {
-        rollDice("1d8");
-      });
-      
-      document.getElementById("roll-d10").addEventListener("click", () => {
-        rollDice("1d10");
-      });
-      
-      document.getElementById("roll-d12").addEventListener("click", () => {
-        rollDice("1d12");
-      });
-      
-      document.getElementById("roll-d20").addEventListener("click", () => {
-        rollDice("1d20");
-      });
-      
-      document.getElementById("roll-d100").addEventListener("click", () => {
-        rollDice("1d10+1d100");
+      // Clear button
+      document.getElementById("clear-btn").addEventListener("click", () => {
+        // Reset all dice selections
+        for (const type in diceSelections) {
+          diceSelections[type] = 0;
+        }
+        
+        // Update the display
+        updateSelectionDisplay();
+        
+        // Clear result
+        rollResult.textContent = "-";
+        rollDetails.textContent = "Roll the dice";
       });
       
       console.log("Event listeners set up");
@@ -184,11 +277,42 @@
         rollResult.textContent = total;
         rollDetails.textContent = breakdown || notation;
         
+        // Check for critical rolls (natural 20s, etc.)
+        checkForCriticals(results);
+        
       }).catch(error => {
         console.error("Error rolling dice:", error);
         rollResult.textContent = "Error";
         rollDetails.textContent = "Error rolling dice";
       });
+    }
+    
+    // Function to check for critical rolls
+    function checkForCriticals(results) {
+      if (!results.rolls) return;
+      
+      // Check for natural 20s
+      const hasNatural20 = results.rolls.some(roll => 
+        roll.dice === 'd20' && roll.values.includes(20)
+      );
+      
+      // Check for natural 1s
+      const hasNatural1 = results.rolls.some(roll => 
+        roll.dice === 'd20' && roll.values.includes(1)
+      );
+      
+      // Apply visual effect for criticals
+      if (hasNatural20) {
+        rollResult.classList.add('critical-success');
+        setTimeout(() => {
+          rollResult.classList.remove('critical-success');
+        }, 2000);
+      } else if (hasNatural1) {
+        rollResult.classList.add('critical-fail');
+        setTimeout(() => {
+          rollResult.classList.remove('critical-fail');
+        }, 2000);
+      }
     }
 
     // Create settings button and add to header

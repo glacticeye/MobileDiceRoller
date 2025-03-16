@@ -1,213 +1,267 @@
 html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color: white;
-  background-color: #222;
-  position: fixed; /* Prevent bouncing on iOS */
-}
-
-/* Dice rolling area */
-#dice-box {
-  width: 100%;
-  height: 85%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  background-color: #2c3e50;
-}
-
-/* Layout */
-#app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-  z-index: 2;
-}
-
-/* Header */
-#header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  height: 60px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-#result-display {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-#roll-result {
-  font-size: 32px;
-  font-weight: bold;
-}
-
-#roll-details {
-  font-size: 14px;
-  color: #aaa;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Main area */
-#main-area {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Bottom controls */
-#dice-controls {
-  display: flex;
-  justify-content: center;
-  padding: 15px 10px;
-  background: rgba(0, 0, 0, 0.7);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dice-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.dice-btn {
-  padding: 15px 0;
-  background: #3498db;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-touch-callout: none;
-  user-select: none;
-  -webkit-user-select: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.dice-btn:active {
-  transform: translateY(2px);
-  background: #2980b9;
-}
-
-@keyframes pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: white;
+    background-color: #222;
+    position: fixed; /* Prevent bouncing on iOS */
   }
-  100% {
-    transform: translate(-50%, -50%) scale(1.1);
+  
+  /* Dice rolling area */
+  #dice-box {
+    width: 100%;
+    height: 85%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-color: #2c3e50;
   }
-}
-
-/* Custom Roll Dialog */
-#custom-roll-dialog {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.9);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  z-index: 100;
-  width: 90%;
-  max-width: 300px;
-  display: none;
-}
-
-.dialog-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.dialog-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 16px;
-  border-radius: 5px;
-}
-
-.dialog-buttons {
-  display: flex;
-  justify-content: space-between;
-}
-
-.dialog-button {
-  padding: 10px 0;
-  flex: 1;
-  background: #3498db;
-  border: none;
-  color: white;
-  font-weight: bold;
-  border-radius: 5px;
-  margin: 0 5px;
-}
-
-.dialog-button.cancel {
-  background: #95a5a6;
-}
-
-/* Tooltip with instructions */
-#info-tooltip {
-  position: fixed;
-  bottom: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #fff;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: 5;
-  text-align: center;
-}
-
-/* Tap to add custom dice */
-#custom-dice-btn {
-  position: fixed;
-  bottom: 75px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  background: rgba(52, 152, 219, 0.8);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  z-index: 5;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-#custom-dice-btn:active {
-  transform: scale(0.95);
-  background: rgba(41, 128, 185, 0.8);
-}
+  
+  /* Layout */
+  #app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+  }
+  
+  /* Header */
+  #header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    height: 60px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  }
+  
+  #result-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #roll-result {
+    font-size: 32px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  #roll-details {
+    font-size: 14px;
+    color: #aaa;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Main area */
+  #main-area {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Dice selection display */
+  #dice-selection-display {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  #selection-container {
+    min-height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .selection-text {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .no-selection-text {
+    color: #aaa;
+    font-style: italic;
+  }
+  
+  /* Bottom controls */
+  #dice-controls {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 10px;
+    background: rgba(0, 0, 0, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 15px;
+  }
+  
+  .dice-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .dice-btn {
+    padding: 15px 0;
+    background: #3498db;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dice-btn:active {
+    transform: translateY(2px);
+    background: #2980b9;
+  }
+  
+  .dice-btn.has-selection {
+    background: #27ae60;
+  }
+  
+  .dice-count {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Action buttons */
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  #roll-btn, #clear-btn {
+    padding: 12px 0;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    max-width: 180px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+  }
+  
+  #roll-btn {
+    background: #2ecc71;
+    opacity: 0.7;
+  }
+  
+  #roll-btn.active {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  
+  #roll-btn:active {
+    transform: translateY(2px) scale(1);
+  }
+  
+  #clear-btn {
+    background: #e74c3c;
+  }
+  
+  #clear-btn:active {
+    transform: translateY(2px);
+    background: #c0392b;
+  }
+  
+  /* Critical success/fail animations */
+  .critical-success {
+    color: #2ecc71 !important;
+    animation: pulse 0.5s ease-in-out 2;
+  }
+  
+  .critical-fail {
+    color: #e74c3c !important;
+    animation: pulse 0.5s ease-in-out 2;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* Settings button */
+  #settings-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-height: 600px) {
+    #header {
+      height: 50px;
+    }
+    
+    .dice-btn {
+      padding: 10px 0;
+    }
+    
+    #roll-btn, #clear-btn {
+      padding: 10px 0;
+    }
+    
+    #dice-controls {
+      padding: 10px;
+      gap: 10px;
+    }
+  }
