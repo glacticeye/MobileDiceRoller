@@ -237,6 +237,7 @@
       <div class="tab active" data-tab="colorsets">Colorsets</div>
       <div class="tab" data-tab="textures">Textures</div>
       <div class="tab" data-tab="materials">Materials</div>
+      <div class="tab" data-tab="surface">Surface</div>
       <div class="tab" data-tab="other">Other</div>
     </div>
     
@@ -247,12 +248,9 @@
         <div class="filter-controls">
           <button class="filter-btn active" data-category="all">All</button>
           <button class="filter-btn" data-category="Damage Types">Damage Types</button>
+          <button class="filter-btn" data-category="Elements">Elements</button>
           <button class="filter-btn" data-category="Colors">Colors</button>
           <button class="filter-btn" data-category="Custom Sets">Custom Sets</button>
-          <button class="filter-btn" data-category="Star Wars™ RPG">Star Wars RPG</button>
-          <button class="filter-btn" data-category="Star Wars™ X-Wing">X-Wing</button>
-          <button class="filter-btn" data-category="Star Wars™ Armada">Armada</button>
-          <button class="filter-btn" data-category="Star Wars™ Legion">Legion</button>
           <button class="filter-btn" data-category="Other">Other</button>
         </div>
         
@@ -346,8 +344,8 @@
         </div>
       </div>
       
-      <!-- Other Settings Tab -->
-      <div class="tab-content" id="other-tab">
+      <!-- Surface Tab -->
+      <div class="tab-content" id="surface-tab">
         <div class="settings-section">
           <div class="settings-section-title">Surface</div>
           <div class="colorset-grid">
@@ -369,9 +367,12 @@
             </div>
           </div>
         </div>
+      </div>
         
+      <!-- Other Settings Tab -->
+      <div class="tab-content" id="other-tab">
         <div class="settings-section">
-          <div class="settings-section-title">Other Settings</div>
+          <div class="settings-section-title">Physics</div>
           <div style="display: flex; flex-direction: column; gap: 15px;">
             <div>
               <label style="display: block; margin-bottom: 5px;">Gravity</label>
@@ -381,6 +382,12 @@
               <label style="display: block; margin-bottom: 5px;">Toss Strength</label>
               <input type="range" min="0.5" max="3" value="1.5" step="0.1" class="slider" id="strength-slider" style="width: 100%;">
             </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <div class="settings-section-title">Audio & Graphics</div>
+          <div style="display: flex; flex-direction: column; gap: 15px;">
             <div>
               <label style="display: block; margin-bottom: 5px;">Volume</label>
               <input type="range" min="0" max="100" value="100" class="slider" id="volume-slider" style="width: 100%;">
@@ -669,159 +676,6 @@
         texture: 'none',
         description: 'White'
       },
-      'swrpg_abi': {
-        name: 'Star Wars RPG - Ability',
-        category: 'Star Wars™ RPG',
-        foreground: '#00FF00',
-        background: ['#3D9238','#52B848','#5EAC56','#9ECB9A'],
-        outline: '#000000',
-        texture: 'cloudy_2',
-        description: 'Star Wars™ RPG Ability Dice'
-      },
-      'swrpg_pro': {
-        name: 'Star Wars RPG - Proficiency',
-        category: 'Star Wars™ RPG',
-        foreground: '#FFFF00',
-        background: ['#CABB1C','#F9E33B','#FFE900','#F0E49D'],
-        outline: '#000000',
-        texture: 'paper',
-        description: 'Star Wars™ RPG Proficiency Dice'
-      },
-      'swrpg_dif': {
-        name: 'Star Wars RPG - Difficulty',
-        category: 'Star Wars™ RPG',
-        foreground: '#8000FC',
-        background: ['#39165F','#664B84','#50247E','#745F88'],
-        outline: '#000000',
-        texture: 'cloudy_2',
-        description: 'Star Wars™ RPG Difficulty Dice'
-      },
-      'swrpg_cha': {
-        name: 'Star Wars RPG - Challenge',
-        category: 'Star Wars™ RPG',
-        foreground: '#FF0000',
-        background: ['#A91F32','#EB4254','#E51836','#BA3645'],
-        outline: '#000000',
-        texture: 'paper',
-        description: 'Star Wars™ RPG Challenge Dice'
-      },
-      'swrpg_boo': {
-        name: 'Star Wars RPG - Boost',
-        category: 'Star Wars™ RPG',
-        foreground: '#00FFFF',
-        background: ['#4B9DC6','#689FC4','#85CFF2','#8FC0D8'],
-        outline: '#000000',
-        texture: 'glitter',
-        description: 'Star Wars™ RPG Boost Dice'
-      },
-      'swrpg_set': {
-        name: 'Star Wars RPG - Setback',
-        category: 'Star Wars™ RPG',
-        foreground: '#111111',
-        background: ['#252223','#241F21','#282828','#111111'],
-        outline: '#ffffff',
-        texture: 'glitter',
-        description: 'Star Wars™ RPG Setback Dice'
-      },
-      'swrpg_for': {
-        name: 'Star Wars RPG - Force',
-        category: 'Star Wars™ RPG',
-        foreground: '#000000',
-        background: ['#F3F3F3','#D3D3D3','#BABABA','#FFFFFF'],
-        outline: '#FFFFFF',
-        texture: 'stars',
-        description: 'Star Wars™ RPG Force Dice'
-      },
-      'swa_red': {
-        name: 'Armada Attack - Red',
-        category: 'Star Wars™ Armada',
-        foreground: '#ffffff',
-        background: ['#440D19','#8A1425','#C72336','#C04551'],
-        outline: 'none',
-        texture: 'stainedglass',
-        description: 'Star Wars™ Armada Red Attack Dice'
-      },
-      'swa_blue': {
-        name: 'Armada Attack - Blue',
-        category: 'Star Wars™ Armada',
-        foreground: '#ffffff',
-        background: ['#212642','#28286E','#2B348C','#3D4BB5','#5D64AB'],
-        outline: 'none',
-        texture: 'stainedglass',
-        description: 'Star Wars™ Armada Blue Attack Dice'
-      },
-      'swa_black': {
-        name: 'Armada Attack - Black',
-        category: 'Star Wars™ Armada',
-        foreground: '#ffffff',
-        background: ['#252223','#241F21','#282828','#111111'],
-        outline: 'none',
-        texture: 'stainedglass',
-        description: 'Star Wars™ Armada Black Attack Dice'
-      },
-      'xwing_red': {
-        name: 'X-Wing Attack - Red',
-        category: 'Star Wars™ X-Wing',
-        foreground: '#ffffff',
-        background: ['#440D19','#8A1425','#C72336','#C04551'],
-        outline: 'none',
-        texture: 'stars',
-        description: 'Star Wars™ X-Wing Red Attack Dice'
-      },
-      'xwing_green': {
-        name: 'X-Wing Attack - Green',
-        category: 'Star Wars™ X-Wing',
-        foreground: '#ffffff',
-        background: ['#3D9238','#52B848','#5EAC56','#9ECB9A'],
-        outline: 'none',
-        texture: 'stars',
-        description: 'Star Wars™ X-Wing Green Attack Dice'
-      },
-      'swl_atkred': {
-        name: 'Legion Attack - Red',
-        category: 'Star Wars™ Legion',
-        foreground: '#ffffff',
-        background: ['#440D19','#8A1425','#C72336','#C04551'],
-        outline: 'none',
-        texture: 'fire',
-        description: 'Star Wars™ Legion Red Attack Dice'
-      },
-      'swl_atkblack': {
-        name: 'Legion Attack - Black',
-        category: 'Star Wars™ Legion',
-        foreground: '#ffffff',
-        background: ['#252223','#241F21','#282828','#111111'],
-        outline: 'none',
-        texture: 'fire',
-        description: 'Star Wars™ Legion Black Attack Dice'
-      },
-      'swl_atkwhite': {
-        name: 'Legion Attack - White',
-        category: 'Star Wars™ Legion',
-        foreground: '#000000',
-        background: ['#ffffff','#DFF4FA','#BCBCBC','#F1EDE2','#F2ECE0'],
-        outline: 'none',
-        texture: 'fire',
-        description: 'Star Wars™ Legion White Attack Dice'
-      },
-      'swl_defred': {
-        name: 'Legion Defense - Red',
-        category: 'Star Wars™ Legion',
-        foreground: '#ffffff',
-        background: ['#440D19','#8A1425','#C72336','#C04551'],
-        outline: 'none',
-        texture: 'fire',
-        description: 'Star Wars™ Legion Red Defense Dice'
-      },
-      'swl_defwhite': {
-        name: 'Legion Defense - White',
-        category: 'Star Wars™ Legion',
-        foreground: '#000000',
-        background: ['#ffffff','#DFF4FA','#BCBCBC','#F1EDE2','#F2ECE0'],
-        outline: 'none',
-        texture: 'fire',
-        description: 'Star Wars™ Legion White Defense Dice'
-      }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -938,20 +792,6 @@
         });
       });
       
-      // Set up tab navigation
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          // Remove active class from all tabs and content
-          document.querySelectorAll('.tab, .tab-content').forEach(el => {
-            el.classList.remove('active');
-          });
-          
-          // Add active class to clicked tab and corresponding content
-          tab.classList.add('active');
-          document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
-        });
-      });
-      
       // Set up texture selection
       document.querySelectorAll('#texture-grid .colorset-item').forEach(item => {
         if (item.dataset.texture === currentSettings.texture) {
@@ -1056,7 +896,19 @@
       document.getElementById('back-button').addEventListener('click', () => {
         window.location.href = 'index.html';
       });
+      
+      // Set up tab navigation
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs and content
+          document.querySelectorAll('.tab, .tab-content').forEach(el => {
+            el.classList.remove('active');
+          });
+          
+          // Add active class to clicked tab and corresponding content
+          tab.classList.add('active');
+          document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+        });
+      });
     });
-  </script>
-</body>
-</html>
+</script>
