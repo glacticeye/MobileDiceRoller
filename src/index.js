@@ -1,5 +1,5 @@
 // Import the styles
-import "./styles.css";
+// import "./styles.css";
 
 // Import the dice box library
 import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mobile Dice Roller</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+  <body>
+    <div id="dice-box"></div>
+    
+    <div id="app-container">
+      <!-- Header with result display -->
+      <div id="header">
+        <div style="width: 40px;"></div> <!-- Spacer for balance -->
+        <div id="result-display">
+          <div id="roll-result">-</div>
+          <div id="roll-details">Roll the dice</div>
+        </div>
+        <div style="width: 40px;"></div> <!-- Spacer for balance -->
+      </div>
+      
+      <!-- Main area for dice rolling -->
+      <div id="main-area"></div>
+      
+      <!-- Bottom dice controls -->
+      <div id="dice-controls">
+        <div class="dice-grid">
+          <button class="dice-btn" id="roll-d4">d4</button>
+          <button class="dice-btn" id="roll-d6">d6</button>
+          <button class="dice-btn" id="roll-d8">d8</button>
+          <button class="dice-btn" id="roll-d10">d10</button>
+          <button class="dice-btn" id="roll-d12">d12</button>
+          <button class="dice-btn" id="roll-d20">d20</button>
+          <button class="dice-btn" id="roll-d100">%</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Result Modal -->
+    <div id="result-modal"></div>
+    <div id="particles-container"></div>
+
+    <!-- Custom Roll Dialog (referenced in CSS but not implemented yet) -->
+    <div id="custom-roll-dialog">
+      <div class="dialog-title">Custom Roll</div>
+      <input type="text" class="dialog-input" id="custom-roll-input" placeholder="e.g., 2d6+3">
+      <div class="dialog-buttons">
+        <button class="dialog-button cancel" id="cancel-custom-roll">Cancel</button>
+        <button class="dialog-button" id="confirm-custom-roll">Roll</button>
+      </div>
+    </div>
+
+    <!-- Custom Dice Button (referenced in CSS but not implemented yet) -->
+    <div id="custom-dice-btn">+</div>
+    <div id="info-tooltip">Tap for custom roll</div>
+
+    <!-- Script to load your bundled JavaScript -->
+    <script type="module" src="./src/index.js"></script>
+  </body>
+</html>
