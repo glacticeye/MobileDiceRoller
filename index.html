@@ -31,6 +31,7 @@
     <!-- Bottom dice controls -->
     <div id="dice-controls">
       <div class="dice-grid">
+        <button class="dice-btn" id="roll-d2">d2 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d4">d4 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d6">d6 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d8">d8 <span class="dice-count">0</span></button>
@@ -60,7 +61,7 @@
       colorset: null,
       texture: null,
       material: null,
-      surface: null,
+      surface: 'green-felt',
       gravity: 200,
       strength: 1.5,
       volume: 100,
@@ -89,7 +90,7 @@
       sound_dieMaterial: settings.material,
       theme_colorset: settings.colorset, // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
       // theme_texture: settings.texture, // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
-      theme_surface: settings.surface, // "felt", "metal", "wood_table", "wood_tray" 
+      theme_surface: 'green-felt', // settings.surface, // "felt", "metal", "wood_table", "wood_tray" 
       gravity_multiplier: settings.gravity,
       light_intensity: 1,
       baseScale: 100,
@@ -104,6 +105,7 @@
     let rollDetails;
     let selectionContainer;
     const diceSelections = {
+      d2: 0,
       d4: 0,
       d6: 0,
       d8: 0,

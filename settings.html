@@ -164,13 +164,50 @@
       background-size: cover;
     }
 
-    .texture-marble { background-image: url('assets/textures/marble.webp'); }
-    .texture-ice { background-image: url('assets/textures/ice.webp'); }
-    .texture-fire { background-image: url('assets/textures/fire.webp'); }
-    .texture-cloudy { background-image: url('assets/textures/cloudy.webp'); }
-    .texture-speckles { background-image: url('assets/textures/speckles.webp'); }
-    .texture-stars { background-image: url('assets/textures/stars.webp'); }
-    .texture-skulls { background-image: url('assets/textures/skulls.webp'); }
+/* Textures Assets*/    
+/* Basic textures */
+.texture-none { background-image: none; }
+.texture-marble { background-image: url('assets/textures/marble.webp'); }
+.texture-ice { background-image: url('assets/textures/ice.webp'); }
+.texture-fire { background-image: url('assets/textures/fire.webp'); }
+.texture-cloudy { background-image: url('assets/textures/cloudy.webp'); }
+.texture-speckles { background-image: url('assets/textures/speckles.webp'); }
+.texture-stars { background-image: url('assets/textures/stars.webp'); }
+.texture-skulls { background-image: url('assets/textures/skulls.webp'); }
+.texture-paper-bump { background-image: url('assets/textures/paper-bump.webp'); }
+.texture-metal { background-image: url('assets/textures/metal.webp'); }
+.texture-water { background-image: url('assets/textures/water.webp'); }
+.texture-glitter { background-image: url('assets/textures/glitter.webp'); }
+
+/* Feather textures */
+.texture-feather { background-image: url('assets/textures/feather.webp'); }
+.texture-feather-bump { background-image: url('assets/textures/feather-bump.webp'); }
+
+/* Dragon textures */
+.texture-dragon { background-image: url('assets/textures/dragon.webp'); }
+.texture-dragon-bump { background-image: url('assets/textures/dragon-bump.webp'); }
+.texture-lizard { background-image: url('assets/textures/lizard.webp'); }
+.texture-lizard-bump { background-image: url('assets/textures/lizard-bump.webp'); }
+
+/* Animal print textures */
+.texture-leopard { background-image: url('assets/textures/leopard.webp'); }
+.texture-tiger { background-image: url('assets/textures/tiger.webp'); }
+.texture-cheetah { background-image: url('assets/textures/cheetah.webp'); }
+
+/* Bronze textures */
+.texture-bronze01 { background-image: url('assets/textures/bronze01.webp'); }
+.texture-bronze02 { background-image: url('assets/textures/bronze02.webp'); }
+.texture-bronze03 { background-image: url('assets/textures/bronze03.webp'); }
+.texture-bronze03a { background-image: url('assets/textures/bronze03a.webp'); }
+.texture-bronze03b { background-image: url('assets/textures/bronze03b.webp'); }
+.texture-bronze04 { background-image: url('assets/textures/bronze04.webp'); }
+
+/* Others */
+.texture-paper { background-image: url('assets/textures/paper.webp'); }
+.texture-glitter-alpha { background-image: url('assets/textures/glitter-alpha.webp'); }
+.texture-glitter-bump { background-image: url('assets/textures/glitter-bump.webp'); }
+.texture-stainedglass { background-image: url('assets/textures/stainedglass.webp'); }
+.texture-stainedglass-bump { background-image: url('assets/textures/stainedglass-bump.webp'); }
 
     /* Tab navigation for different settings */
     .tabs {
@@ -260,11 +297,10 @@
       </div>
       
       <!-- Textures Tab -->
-      <div class="tab-content" id="textures-tab">
+      <!-- <div class="tab-content" id="textures-tab">
         <div class="settings-section">
-          <!-- <div class="settings-section-title">Dice Textures</div> -->
+         <div class="settings-section-title">Dice Textures</div>
           <div class="colorset-grid" id="texture-grid">
-            <!-- Texture items will be added here -->
             <div class="colorset-item" data-texture="marble">
               <div class="colorset-preview">
                 <div class="texture-overlay texture-marble"></div>
@@ -313,7 +349,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       
       <!-- Materials Tab -->
       <div class="tab-content" id="materials-tab">
@@ -324,9 +360,9 @@
               <div class="colorset-preview">M</div>
               <div class="colorset-name">Metal</div>
             </div>
-            <div class="colorset-item" data-material="wood">
+            <div class="colorset-item" data-material="wood_table">
               <div class="colorset-preview">W</div>
-              <div class="colorset-name">Wood</div>
+              <div class="colorset-name">Wood Table</div>
             </div>
             <div class="colorset-item" data-material="glass">
               <div class="colorset-preview">G</div>
@@ -350,21 +386,21 @@
           <div class="settings-section-title">Surface</div>
           <div class="colorset-grid">
             <div class="colorset-item" data-surface="green-felt">
-              <div class="colorset-preview" style="background-color: #1b5e20;"></div>
-              <div class="colorset-name">Green Felt</div>
+              <div class="colorset-preview">F</div>
+              <div class="colorset-name">Felt</div>
             </div>
-            <div class="colorset-item" data-surface="red-felt">
-              <div class="colorset-preview" style="background-color: #b71c1c;"></div>
-              <div class="colorset-name">Red Felt</div>
+            <div class="colorset-item" data-surface="green-felt">
+              <div class="colorset-preview">M</div>
+              <div class="colorset-name">Metal</div>
             </div>
-            <div class="colorset-item" data-surface="blue-felt">
-              <div class="colorset-preview" style="background-color: #0d47a1;"></div>
-              <div class="colorset-name">Blue Felt</div>
+            <div class="colorset-item" data-surface="green-felt">
+              <div class="colorset-preview">W</div>
+              <div class="colorset-name">Wood Table</div>
             </div>
-            <div class="colorset-item" data-surface="black-felt">
-              <div class="colorset-preview" style="background-color: #212121;"></div>
-              <div class="colorset-name">Black Felt</div>
-            </div>
+            <!-- <div class="colorset-item" data-surface="green-felt">
+              <div class="colorset-preview">W</div>
+              <div class="colorset-name">Wood Tray</div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -376,7 +412,7 @@
           <div style="display: flex; flex-direction: column; gap: 15px;">
             <div>
               <label style="display: block; margin-bottom: 5px;">Gravity</label>
-              <input type="range" min="100" max="300" value="200" class="slider" id="gravity-slider" style="width: 100%;">
+              <input type="range" min="100" max="1000" value="400" step="50" class="slider" id="gravity-slider" style="width: 100%;">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px;">Toss Strength</label>
@@ -412,21 +448,30 @@
   </div>
 
   <script>
-    // Colorsets data from the uploaded file
+    // Colorsets data from https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
     const COLORSETS = {
+      'black': {
+        name: 'Black',
+        category: 'Colors',
+        foreground: '#ffffff',
+        background: '#000000',
+        outline: 'black',
+        texture: 'none',
+        description: 'Black',
+      },
+      'white': {
+        name: 'White',
+        category: 'Colors',
+        foreground: '#000000',
+        background: '#FFFFFF',
+        outline: '#FFFFFF',
+        texture: 'none',
+        description: 'White'
+      },
       'coin_default': {
         name: 'Gold Coin',
         description: 'Gold Dragonhead Coin',
-        category: 'Other',
-        foreground: '#f6c928',
-        background: '#f6c928',
-        outline: 'none',
-        texture: 'metal'
-      },
-      'coin_silver': {
-        name: 'Silver Coin',
-        description: 'Gold Dragonhead Coin',
-        category: 'Other',
+        category: 'Colors',
         foreground: '#f6c928',
         background: '#f6c928',
         outline: 'none',
@@ -438,7 +483,7 @@
         foreground: '#F9B333',
         background: '#FFFFFF',
         outline: '',
-        texture: 'paper',
+        texture: 'paper-bump',
         description: 'Radiant'
       },
       'fire': {
@@ -459,6 +504,24 @@
         texture: 'ice',
         description: 'Ice'
       },
+      'lightning': {
+        name: 'Lightning',
+        category: 'Damage Types',
+        foreground: '#FFC500',
+        background: ['#f17105', '#f3ca40','#eddea4','#df9a57','#dea54b'],
+        outline: '#7D7D7D',
+        texture: 'ice',
+        description: 'Lightning'
+      },
+      'thunder': {
+        name: 'Thunder',
+        category: 'Damage Types',
+        foreground: '#FFC500',
+        background: '#7D7D7D',
+        outline: 'black',
+        texture: 'cloudy',
+        description: 'Thunder'
+      },
       'poison': {
         name: 'Poison',
         category: 'Damage Types',
@@ -477,27 +540,27 @@
         texture: 'marble',
         description: 'Acid'
       },
-      'thunder': {
-        name: 'Thunder',
+      'psychic': {
+        name: 'Psychic',
         category: 'Damage Types',
-        foreground: '#FFC500',
-        background: '#7D7D7D',
+        foreground: '#D6A8FF',
+        background: ['#313866','#504099','#66409E','#934FC3','#C949FC','#313866'],
         outline: 'black',
-        texture: 'cloudy',
-        description: 'Thunder'
+        texture: 'speckles',
+        description: 'Psychic'
       },
-      'lightning': {
-        name: 'Lightning',
+      'necrotic': {
+        name: 'Necrotic',
         category: 'Damage Types',
-        foreground: '#FFC500',
-        background: ['#f17105', '#f3ca40','#eddea4','#df9a57','#dea54b'],
-        outline: '#7D7D7D',
-        texture: 'ice',
-        description: 'Lightning'
+        foreground: '#ffffff',
+        background: '#6F0000',
+        outline: 'black',
+        texture: 'skulls',
+        description: 'Necrotic'
       },
       'air': {
         name: 'Air',
-        category: 'Damage Types',
+        category: 'Elements',
         foreground: '#ffffff',
         background: ['#d0e5ea', '#c3dee5','#a4ccd6','#8dafb7','#80a4ad'],
         outline: 'black',
@@ -530,24 +593,6 @@
         outline: '#570000',
         texture: 'stars',
         description: 'Force'
-      },
-      'psychic': {
-        name: 'Psychic',
-        category: 'Elements',
-        foreground: '#D6A8FF',
-        background: ['#313866','#504099','#66409E','#934FC3','#C949FC','#313866'],
-        outline: 'black',
-        texture: 'speckles',
-        description: 'Psychic'
-      },
-      'necrotic': {
-        name: 'Necrotic',
-        category: 'Damage Types',
-        foreground: '#ffffff',
-        background: '#6F0000',
-        outline: 'black',
-        texture: 'skulls',
-        description: 'Necrotic'
       },
       'breebaby': {
         name: 'Pastel Sunset',
@@ -609,18 +654,18 @@
         foreground: '#565656',
         background: 'white',
         outline: 'none',
-        texture: 'astral',
+        texture: 'stars',
         description: 'The Astral Sea, for Austin'
       },
       'bronze': {
         name: 'Thylean Bronze',
-        description: 'Thylean Bronze by @SpencerThayer',
         category: 'Custom Sets',
         foreground: ['#FF9159','#FFB066','#FFBF59','#FFD059'],
         background: ['#705206','#7A4E06','#643100','#7A2D06'],
         outline: ['#3D2D03','#472D04','#301700','#471A04'],
         edge: ['#FF5D0D','#FF7B00','#FFA20D','#FFBA0D'],
-        texture: ['bronze01','bronze02','bronze03','bronze03a','bronze03b','bronze04']
+        texture: ['bronze01','bronze02','bronze03','bronze03a','bronze03b','bronze04'],
+        description: 'Thylean Bronze by @SpencerThayer'
       },
       'dragons': {
         name: 'Here be Dragons',
@@ -637,54 +682,27 @@
         foreground: '#FFFFFF',
         background: ['#F11602', '#FFC000', '#6EC832', '#0094BC', '#05608D', '#FEABB3', '#F75680', '#F3F0DF', '#C7A57F'],
         outline: 'black',
-        texture: 'bird',
+        texture: 'feather',
         description: 'Bird Up!'
       },
       'tigerking': {
         name: 'Tiger King',
-        category: 'Other',
+        category: 'Custom Sets',
         foreground: '#ffffff',
         background: '#FFCC40',
         outline: 'black',
         texture: ['leopard', 'tiger', 'cheetah'],
         description: 'Leopard Print'
       },
-      'rainbow': {
-        name: 'Rainblow',
-        category: 'Colors',
-        foreground: ['#FF5959','#FFA74F','#FFFF56','#59FF59','#2374FF','#00FFFF','#FF59FF'],
-        background: ['#900000','#CE3900','#BCBC00','#00B500','#00008E','#008282','#A500A5'],
-        outline: 'black',
-        texture: 'none',
-        description: 'Rainblow'
-      },
-      'black': {
-        name: 'Black',
-        category: 'Colors',
-        foreground: '#ffffff',
-        background: '#000000',
-        outline: 'black',
-        texture: 'none',
-        description: 'Black',
-      },
-      'white': {
-        name: 'White',
-        category: 'Colors',
-        foreground: '#000000',
-        background: '#FFFFFF',
-        outline: '#FFFFFF',
-        texture: 'none',
-        description: 'White'
-      },
     };
 
     document.addEventListener('DOMContentLoaded', () => {
       // Current settings (default values)
       let currentSettings = {
-        colorset: 'radiant',
-        texture: 'marble',
-        material: 'plastic',
-        surface: 'green-felt',
+        colorset: null,
+        texture: null,
+        material: null,
+        surface: null,
         gravity: 200,
         strength: 1.5,
         volume: 100,
@@ -881,8 +899,8 @@
             detail: currentSettings
           }));
           
-          // Provide feedback (could be a toast notification in a real app)
-          alert('Settings saved successfully!');
+          // Provide feedback
+          console.debug('Settings saved successfully!');
           
           // Go back to main screen
           window.location.href = 'index.html';
