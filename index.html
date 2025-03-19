@@ -22,10 +22,7 @@
     
     <!-- Main area for dice rolling -->
     <div id="main-area">
-      <!-- Selection information will appear here -->
-      <div id="dice-selection-display">
-        <div id="selection-container"></div>
-      </div>
+      <!-- Empty main area -->
     </div>
     
     <!-- Bottom dice controls -->
@@ -38,7 +35,6 @@
         <button class="dice-btn" id="roll-d10">d10 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d12">d12 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d20">d20 <span class="dice-count">0</span></button>
-        <button class="dice-btn" id="roll-d100">d100 <span class="dice-count">0</span></button>
       </div>
       
       <!-- Roll and Clear buttons -->
@@ -103,7 +99,6 @@
     // Variables to store DOM elements and dice counts
     let rollResult;
     let rollDetails;
-    let selectionContainer;
     const diceSelections = {
       d2: 0,
       d4: 0,
@@ -111,14 +106,11 @@
       d8: 0,
       d10: 0,
       d12: 0,
-      d20: 0,
-      d100: 0
+      d20: 0
     };
     
-    // Helper function to update the dice selection display
+    // Helper function to update the dice selection display in roll-details
     function updateSelectionDisplay() {
-      selectionContainer.innerHTML = '';
-      
       // Check if any dice are selected
       const hasSelections = Object.values(diceSelections).some(count => count > 0);
       
@@ -131,17 +123,11 @@
           }
         }
         
-        // Create and append the selection text
-        const selectionText = document.createElement('div');
-        selectionText.className = 'selection-text';
-        selectionText.textContent = selections.join(' + ');
-        selectionContainer.appendChild(selectionText);
+        // Update roll-details with the selection text
+        rollDetails.textContent = selections.join(' + ');
       } else {
         // If no dice are selected, display a prompt
-        const noSelectionText = document.createElement('div');
-        noSelectionText.className = 'no-selection-text';
-        noSelectionText.textContent = 'Select dice to roll';
-        selectionContainer.appendChild(noSelectionText);
+        rollDetails.textContent = 'Select dice to roll';
       }
       
       // Update all dice count displays
@@ -188,7 +174,6 @@
       
       rollResult = document.getElementById("roll-result");
       rollDetails = document.getElementById("roll-details");
-      selectionContainer = document.getElementById("selection-container");
       
       Box.initialize().then(() => {
         rollDetails.textContent = "Ready to roll";
