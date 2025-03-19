@@ -4,261 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mobile Dice Roller - Settings</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      color: white;
-      background-color: #222;
-      position: fixed;
-    }
-
-    #app-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      position: relative;
-      z-index: 2;
-    }
-
-    #header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      height: 60px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-    }
-
-    #header-title {
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-      flex: 1;
-    }
-
-    .back-btn {
-      padding: 8px 15px;
-      background: #3498db;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .settings-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 15px;
-    }
-
-    .settings-section {
-      margin-bottom: 25px;
-    }
-
-    .settings-section-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .colorset-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .colorset-item {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 12px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-
-    .colorset-item.active {
-      background: rgba(52, 152, 219, 0.3);
-      box-shadow: 0 0 0 2px #3498db;
-    }
-
-    .colorset-preview {
-      width: 50px;
-      height: 50px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      font-size: 20px;
-      background-size: cover;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .colorset-name {
-      font-size: 14px;
-      text-align: center;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .colorset-category {
-      font-size: 11px;
-      color: #aaa;
-      margin-top: 3px;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .settings-footer {
-      padding: 15px;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-    }
-
-    .save-btn {
-      width: 100%;
-      max-width: 300px;
-      padding: 12px;
-      background: #2ecc71;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* For colorset preview backgrounds */
-    .bg-gradient {
-      background: linear-gradient(45deg, var(--color1), var(--color2));
-    }
-
-    .bg-solid {
-      background-color: var(--color);
-    }
-
-    .texture-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 0.5;
-      background-size: cover;
-    }
-
-/* Textures Assets*/    
-/* Basic textures */
-.texture-none { background-image: none; }
-.texture-marble { background-image: url('assets/textures/marble.webp'); }
-.texture-ice { background-image: url('assets/textures/ice.webp'); }
-.texture-fire { background-image: url('assets/textures/fire.webp'); }
-.texture-cloudy { background-image: url('assets/textures/cloudy.webp'); }
-.texture-speckles { background-image: url('assets/textures/speckles.webp'); }
-.texture-stars { background-image: url('assets/textures/stars.webp'); }
-.texture-skulls { background-image: url('assets/textures/skulls.webp'); }
-.texture-paper-bump { background-image: url('assets/textures/paper-bump.webp'); }
-.texture-metal { background-image: url('assets/textures/metal.webp'); }
-.texture-water { background-image: url('assets/textures/water.webp'); }
-.texture-glitter { background-image: url('assets/textures/glitter.webp'); }
-
-/* Feather textures */
-.texture-feather { background-image: url('assets/textures/feather.webp'); }
-.texture-feather-bump { background-image: url('assets/textures/feather-bump.webp'); }
-
-/* Dragon textures */
-.texture-dragon { background-image: url('assets/textures/dragon.webp'); }
-.texture-dragon-bump { background-image: url('assets/textures/dragon-bump.webp'); }
-.texture-lizard { background-image: url('assets/textures/lizard.webp'); }
-.texture-lizard-bump { background-image: url('assets/textures/lizard-bump.webp'); }
-
-/* Animal print textures */
-.texture-leopard { background-image: url('assets/textures/leopard.webp'); }
-.texture-tiger { background-image: url('assets/textures/tiger.webp'); }
-.texture-cheetah { background-image: url('assets/textures/cheetah.webp'); }
-
-/* Bronze textures */
-.texture-bronze01 { background-image: url('assets/textures/bronze01.webp'); }
-.texture-bronze02 { background-image: url('assets/textures/bronze02.webp'); }
-.texture-bronze03 { background-image: url('assets/textures/bronze03.webp'); }
-.texture-bronze03a { background-image: url('assets/textures/bronze03a.webp'); }
-.texture-bronze03b { background-image: url('assets/textures/bronze03b.webp'); }
-.texture-bronze04 { background-image: url('assets/textures/bronze04.webp'); }
-
-/* Others */
-.texture-paper { background-image: url('assets/textures/paper.webp'); }
-.texture-glitter-alpha { background-image: url('assets/textures/glitter-alpha.webp'); }
-.texture-glitter-bump { background-image: url('assets/textures/glitter-bump.webp'); }
-.texture-stainedglass { background-image: url('assets/textures/stainedglass.webp'); }
-.texture-stainedglass-bump { background-image: url('assets/textures/stainedglass-bump.webp'); }
-
-    /* Tab navigation for different settings */
-    .tabs {
-      display: flex;
-      margin-bottom: 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .tab {
-      padding: 10px 15px;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-    }
-
-    .tab.active {
-      border-bottom-color: #3498db;
-      font-weight: bold;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Filter controls */
-    .filter-controls {
-      display: flex;
-      margin-bottom: 15px;
-      overflow-x: auto;
-      padding-bottom: 5px;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .filter-btn {
-      padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      border-radius: 15px;
-      color: white;
-      margin-right: 8px;
-      white-space: nowrap;
-      font-size: 12px;
-    }
-
-    .filter-btn.active {
-      background: #3498db;
-    }
-  </style>
+  <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
   <div id="app-container">
@@ -272,7 +18,6 @@
     <!-- Tab Navigation -->
     <div class="tabs">
       <div class="tab active" data-tab="colorsets">Colorsets</div>
-      <!-- <div class="tab" data-tab="textures">Textures</div> -->
       <div class="tab" data-tab="materials">Materials</div>
       <div class="tab" data-tab="surface">Surface</div>
       <div class="tab" data-tab="other">Other</div>
@@ -296,61 +41,6 @@
         </div>
       </div>
       
-      <!-- Textures Tab -->
-      <!-- <div class="tab-content" id="textures-tab">
-        <div class="settings-section">
-         <div class="settings-section-title">Dice Textures</div>
-          <div class="colorset-grid" id="texture-grid">
-            <div class="colorset-item" data-texture="marble">
-              <div class="colorset-preview">
-                <div class="texture-overlay texture-marble"></div>
-              </div>
-              <div class="colorset-name">Marble</div>
-            </div>
-            <div class="colorset-item" data-texture="ice">
-              <div class="colorset-preview">
-                <div class="texture-overlay texture-ice"></div>
-              </div>
-              <div class="colorset-name">Ice</div>
-            </div>
-            <div class="colorset-item" data-texture="fire">
-              <div class="colorset-preview">
-                <div class="texture-overlay texture-fire"></div>
-              </div>
-              <div class="colorset-name">Fire</div>
-            </div>
-            <div class="colorset-item" data-texture="cloudy">
-              <div class="colorset-preview">
-                <div class="texture-overlay texture-cloudy"></div>
-              </div>
-              <div class="colorset-name">Cloudy</div>
-            </div>
-            <div class="colorset-item" data-texture="speckles">
-              <div class="colorset-preview">
-                <div class="texture-overlay texture-speckles"></div>
-              </div>
-              <div class="colorset-name">Speckles</div>
-            </div>
-            <div class="colorset-item" data-texture="stars">
-              <div class="colorset-preview">
-                <div class="texture-overlay texture-stars"></div>
-              </div>
-              <div class="colorset-name">Stars</div>
-            </div>
-            <div class="colorset-item" data-texture="skulls">
-              <div class="colorset-preview">
-                <div class="texture-overlay texture-skulls"></div>
-              </div>
-              <div class="colorset-name">Skulls</div>
-            </div>
-            <div class="colorset-item" data-texture="none">
-              <div class="colorset-preview"></div>
-              <div class="colorset-name">None</div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      
       <!-- Materials Tab -->
       <div class="tab-content" id="materials-tab">
         <div class="settings-section">
@@ -360,9 +50,9 @@
               <div class="colorset-preview">M</div>
               <div class="colorset-name">Metal</div>
             </div>
-            <div class="colorset-item" data-material="wood_table">
+            <div class="colorset-item" data-material="wood">
               <div class="colorset-preview">W</div>
-              <div class="colorset-name">Wood Table</div>
+              <div class="colorset-name">Wood</div>
             </div>
             <div class="colorset-item" data-material="glass">
               <div class="colorset-preview">G</div>
@@ -386,21 +76,17 @@
           <div class="settings-section-title">Surface</div>
           <div class="colorset-grid">
             <div class="colorset-item" data-surface="green-felt">
-              <div class="colorset-preview">F</div>
+              <div class="colorset-preview" style="background-color: #1b5e20;">F</div>
               <div class="colorset-name">Felt</div>
             </div>
-            <div class="colorset-item" data-surface="green-felt">
-              <div class="colorset-preview">M</div>
+            <div class="colorset-item" data-surface="metal">
+              <div class="colorset-preview" style="background-color: #757575;">M</div>
               <div class="colorset-name">Metal</div>
             </div>
-            <div class="colorset-item" data-surface="green-felt">
-              <div class="colorset-preview">W</div>
+            <div class="colorset-item" data-surface="wood_table">
+              <div class="colorset-preview" style="background-color: #795548;">W</div>
               <div class="colorset-name">Wood Table</div>
             </div>
-            <!-- <div class="colorset-item" data-surface="green-felt">
-              <div class="colorset-preview">W</div>
-              <div class="colorset-name">Wood Tray</div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -412,11 +98,19 @@
           <div style="display: flex; flex-direction: column; gap: 15px;">
             <div>
               <label style="display: block; margin-bottom: 5px;">Gravity</label>
-              <input type="range" min="100" max="1000" value="400" step="50" class="slider" id="gravity-slider" style="width: 100%;">
+              <input type="range" min="100" max="1000" value="200" step="50" class="slider" id="gravity-slider">
+              <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <span>Low</span>
+                <span>High</span>
+              </div>
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px;">Toss Strength</label>
-              <input type="range" min="0.5" max="3" value="1.5" step="0.1" class="slider" id="strength-slider" style="width: 100%;">
+              <input type="range" min="0.5" max="3" value="1.5" step="0.1" class="slider" id="strength-slider">
+              <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <span>Gentle</span>
+                <span>Strong</span>
+              </div>
             </div>
           </div>
         </div>
@@ -426,7 +120,11 @@
           <div style="display: flex; flex-direction: column; gap: 15px;">
             <div>
               <label style="display: block; margin-bottom: 5px;">Volume</label>
-              <input type="range" min="0" max="100" value="100" class="slider" id="volume-slider" style="width: 100%;">
+              <input type="range" min="0" max="100" value="100" class="slider" id="volume-slider">
+              <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                <span>Off</span>
+                <span>Max</span>
+              </div>
             </div>
             <div style="display: flex; align-items: center; margin-top: 5px;">
               <input type="checkbox" id="shadows-checkbox" checked>
@@ -697,12 +395,12 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Current settings (default values)
+      // Default settings values
       let currentSettings = {
-        colorset: null,
-        texture: null,
-        material: null,
-        surface: null,
+        colorset: 'radiant',
+        texture: null, // Texture comes from colorset
+        material: 'plastic',
+        surface: 'green-felt',
         gravity: 200,
         strength: 1.5,
         volume: 100,
@@ -752,7 +450,7 @@
           }
           
           // Add text in the foreground color
-          preview.style.color = colorset.foreground;
+          preview.style.color = Array.isArray(colorset.foreground) ? colorset.foreground[0] : colorset.foreground;
           preview.textContent = 'D20';
           
           // Add texture overlay if applicable
@@ -785,6 +483,13 @@
             
             // Update current settings
             currentSettings.colorset = key;
+            
+            // If the colorset has a texture, update the texture setting too
+            if (colorset.texture && colorset.texture !== 'none') {
+              currentSettings.texture = Array.isArray(colorset.texture) ? colorset.texture[0] : colorset.texture;
+            } else {
+              currentSettings.texture = null;
+            }
           });
           
           colorsetGrid.appendChild(item);
@@ -807,22 +512,6 @@
           
           // Generate filtered colorset items
           generateColorsetItems(btn.dataset.category);
-        });
-      });
-      
-      // Set up texture selection
-      document.querySelectorAll('#texture-grid .colorset-item').forEach(item => {
-        if (item.dataset.texture === currentSettings.texture) {
-          item.classList.add('active');
-        }
-        
-        item.addEventListener('click', () => {
-          document.querySelectorAll('#texture-grid .colorset-item').forEach(el => {
-            el.classList.remove('active');
-          });
-          
-          item.classList.add('active');
-          currentSettings.texture = item.dataset.texture;
         });
       });
       
@@ -894,13 +583,8 @@
         try {
           localStorage.setItem('diceSettings', JSON.stringify(currentSettings));
           
-          // Let the main app know settings have changed
-          window.dispatchEvent(new CustomEvent('diceSettingsChanged', {
-            detail: currentSettings
-          }));
-          
           // Provide feedback
-          console.debug('Settings saved successfully!');
+          console.log('Settings saved!');
           
           // Go back to main screen
           window.location.href = 'index.html';
@@ -929,4 +613,6 @@
         });
       });
     });
-</script>
+  </script>
+</body>
+</html>

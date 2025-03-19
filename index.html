@@ -22,23 +22,20 @@
     
     <!-- Main area for dice rolling -->
     <div id="main-area">
-      <!-- Selection information will appear here -->
-      <div id="dice-selection-display">
-        <div id="selection-container"></div>
-      </div>
+      <!-- Empty main area - removed selection display -->
+
     </div>
     
     <!-- Bottom dice controls -->
     <div id="dice-controls">
       <div class="dice-grid">
-        <button class="dice-btn" id="roll-d2">d2 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d4">d4 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d6">d6 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d8">d8 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d10">d10 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d12">d12 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d20">d20 <span class="dice-count">0</span></button>
-        <button class="dice-btn" id="roll-d100">d100 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d100">% <span class="dice-count">0</span></button>
       </div>
       
       <!-- Roll and Clear buttons -->
@@ -57,44 +54,22 @@
     // Import the dice box library
     import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";
     
-    let settings = {
-      colorset: null,
-      texture: null,
-      material: null,
-      surface: 'green-felt',
-      gravity: 200,
-      strength: 1.5,
-      volume: 100,
-      shadows: true,
-      sounds: true
-    };
-    
-    // Try to load saved settings from localStorage
-    try {
-      const savedSettings = localStorage.getItem('diceSettings');
-      if (savedSettings) {
-        settings = {...settings, ...JSON.parse(savedSettings)};
-      }
-    } catch (e) {
-      console.error('Error loading saved settings:', e);
-    }
-    
-    // Initialize the 3D dice box with the settings
+    // Initialize the 3D dice box
     const Box = new DiceBox("#dice-box", {
       assetPath: "assets/",
       framerate: (1/60),
-      sounds: settings.sounds,
-      volume: settings.volume,
+      sounds: true,
+      volume: 100,
       color_spotlight: 0xefdfd5,
-      shadows: settings.shadows,
-      sound_dieMaterial: settings.material,
-      theme_colorset: settings.colorset, // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
-      // theme_texture: settings.texture, // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
-      theme_surface: 'green-felt', // settings.surface, // "felt", "metal", "wood_table", "wood_tray" 
-      gravity_multiplier: settings.gravity,
+      shadows: true,
+      theme_surface: "green-felt",
+      sound_dieMaterial: 'plastic',
+      theme_colorset: "radiant",
+      theme_texture: "marble",
+      gravity_multiplier: 200,
       light_intensity: 1,
       baseScale: 100,
-      strength: settings.strength,
+      strength: 1.5,
       onRollComplete: () => {},
       onAddDiceComplete: () => {},
       onRemoveDiceComplete: () => {}
@@ -105,7 +80,6 @@
     let rollDetails;
     let selectionContainer;
     const diceSelections = {
-      d2: 0,
       d4: 0,
       d6: 0,
       d8: 0,
@@ -117,31 +91,25 @@
     
     // Helper function to update the dice selection display
     function updateSelectionDisplay() {
-      selectionContainer.innerHTML = '';
+      // Get total dice count
+      const totalDiceCount = Object.values(diceSelections).reduce((sum, count) => sum + count, 0);
       
       // Check if any dice are selected
-      const hasSelections = Object.values(diceSelections).some(count => count > 0);
+      const hasSelections = totalDiceCount > 0;
       
-      if (hasSelections) {
-        // Create a string representation of the selection
-        const selections = [];
-        for (const [type, count] of Object.entries(diceSelections)) {
-          if (count > 0) {
-            selections.push(`${count}${type}`);
-          }
+      // Create a string representation of the selection for roll details
+      const selections = [];
+      for (const [type, count] of Object.entries(diceSelections)) {
+        if (count > 0) {
+          selections.push(`${count}${type}`);
         }
-        
-        // Create and append the selection text
-        const selectionText = document.createElement('div');
-        selectionText.className = 'selection-text';
-        selectionText.textContent = selections.join(' + ');
-        selectionContainer.appendChild(selectionText);
+      }
+      
+      // Update roll details to show current selection
+      if (hasSelections) {
+        rollDetails.textContent = selections.join(' + ');
       } else {
-        // If no dice are selected, display a prompt
-        const noSelectionText = document.createElement('div');
-        noSelectionText.className = 'no-selection-text';
-        noSelectionText.textContent = 'Select dice to roll';
-        selectionContainer.appendChild(noSelectionText);
+        rollDetails.textContent = "Roll the dice";
       }
       
       // Update all dice count displays
@@ -188,7 +156,6 @@
       
       rollResult = document.getElementById("roll-result");
       rollDetails = document.getElementById("roll-details");
-      selectionContainer = document.getElementById("selection-container");
       
       Box.initialize().then(() => {
         rollDetails.textContent = "Ready to roll";
@@ -226,11 +193,23 @@
         const diceType = button.id.replace('roll-', '');
         
         button.addEventListener("click", () => {
-          // Increment the count for this dice type
-          diceSelections[diceType]++;
+          // Get total current dice count
+          const totalDiceCount = Object.values(diceSelections).reduce((sum, count) => sum + count, 0);
           
-          // Update the display
-          updateSelectionDisplay();
+          // Only increment if we're under the maximum (40 dice total)
+          if (totalDiceCount < 40) {
+            // Increment the count for this dice type
+            diceSelections[diceType]++;
+            
+            // Update the display
+            updateSelectionDisplay();
+          } else {
+            // Notify user of dice limit
+            rollDetails.textContent = "Maximum of 40 dice reached";
+            setTimeout(() => {
+              updateSelectionDisplay();
+            }, 1500);
+          }
         });
       });
       
