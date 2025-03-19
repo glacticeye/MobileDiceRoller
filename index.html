@@ -286,42 +286,11 @@
         rollResult.textContent = total;
         rollDetails.textContent = breakdown || notation;
         
-        // Check for critical rolls (natural 20s, etc.)
-        checkForCriticals(results);
-        
       }).catch(error => {
         console.error("Error rolling dice:", error);
         rollResult.textContent = "Error";
         rollDetails.textContent = "Error rolling dice";
       });
-    }
-    
-    // Function to check for critical rolls
-    function checkForCriticals(results) {
-      if (!results.rolls) return;
-      
-      // Check for natural 20s
-      const hasNatural20 = results.rolls.some(roll => 
-        roll.dice === 'd20' && roll.values.includes(20)
-      );
-      
-      // Check for natural 1s
-      const hasNatural1 = results.rolls.some(roll => 
-        roll.dice === 'd20' && roll.values.includes(1)
-      );
-      
-      // Apply visual effect for criticals
-      if (hasNatural20) {
-        rollResult.classList.add('critical-success');
-        setTimeout(() => {
-          rollResult.classList.remove('critical-success');
-        }, 2000);
-      } else if (hasNatural1) {
-        rollResult.classList.add('critical-fail');
-        setTimeout(() => {
-          rollResult.classList.remove('critical-fail');
-        }, 2000);
-      }
     }
 
     // Create settings button and add to header
