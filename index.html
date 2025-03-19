@@ -57,10 +57,10 @@
     import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";
     
     let settings = {
-      colorset: 'radiant',
-      texture: 'marble',
-      material: 'plastic',
-      surface: 'green-felt',
+      colorset: null,
+      texture: null,
+      material: null,
+      surface: null,
       gravity: 200,
       strength: 1.5,
       volume: 100,
@@ -86,10 +86,10 @@
       volume: settings.volume,
       color_spotlight: 0xefdfd5,
       shadows: settings.shadows,
-      theme_surface: settings.surface,
       sound_dieMaterial: settings.material,
-      theme_colorset: settings.colorset,
-      theme_texture: settings.texture,
+      theme_colorset: settings.colorset, // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
+      // theme_texture: settings.texture, // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
+      theme_surface: settings.surface, // "felt", "metal", "wood_table", "wood_tray" 
       gravity_multiplier: settings.gravity,
       light_intensity: 1,
       baseScale: 100,
