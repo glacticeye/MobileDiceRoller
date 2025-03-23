@@ -68,7 +68,6 @@
       theme_surface: "green-felt",
       sound_dieMaterial: 'plastic',
       theme_colorset: "radiant",
-      theme_texture: "marble",
       gravity_multiplier: 200,
       light_intensity: 1,
       baseScale: 100,
@@ -363,6 +362,30 @@
       } catch (e) {
         console.error('Error loading dice settings:', e);
       }
+    }
+    
+    // Function to reset to default settings
+    function resetToDefaultSettings() {
+      // Default settings 
+      const defaultSettings = {
+        colorset: 'white',
+        texture: null,
+        material: 'plastic',
+        surface: 'green-felt',
+        gravity: 200,
+        strength: 1.5,
+        volume: 100,
+        shadows: true,
+        sounds: true
+      };
+      
+      // Apply default settings
+      applyDiceSettings(defaultSettings);
+      
+      // Clear localStorage
+      localStorage.removeItem('diceSettings');
+      
+      console.log('Reset to default settings');
     }
 
     // Function to apply dice settings to the DiceBox
