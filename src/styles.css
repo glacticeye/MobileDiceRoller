@@ -6,8 +6,9 @@ html, body {
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   color: white;
-  background-color: #222;
+  background-color: #1a1a2e;
   position: fixed; /* Prevent bouncing on iOS */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 /* Layout */
@@ -26,16 +27,21 @@ html, body {
   align-items: center;
   background: rgba(0, 0, 0, 0.7);
   height: 7.5%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   z-index: 2;
   position: relative;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 #header-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
   text-align: center;
   flex: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
 }
 
 #result-display {
@@ -49,16 +55,19 @@ html, body {
 #roll-result {
   font-size: 32px;
   font-weight: bold;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, transform 0.2s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 #roll-details {
   font-size: 14px;
-  color: #aaa;
+  color: #ccc;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  padding: 0 10px;
+  opacity: 0.85;
 }
 
 /* Dice rolling area */
@@ -69,7 +78,7 @@ html, body {
   top: 7.5%;
   left: 0;
   z-index: 1;
-  background-color: #2c3e50;
+  background: linear-gradient(to bottom, #1a2a3d, #2c3e50);
 }
 
 /* Main area */
@@ -86,12 +95,15 @@ html, body {
   flex-direction: column;
   padding: 1.5% 1.5%;
   background: rgba(0, 0, 0, 0.7);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   gap: 2.5%;
   z-index: 2;
   position: relative;
   height: 22.5%;
   box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .dice-grid {
@@ -105,9 +117,9 @@ html, body {
 
 .dice-btn {
   padding: 15px 0;
-  background: #3498db;
+  background: linear-gradient(to bottom, #4b6cb7, #3498db);
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -116,36 +128,48 @@ html, body {
   -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  overflow: hidden;
 }
 
 .dice-btn:active {
   transform: translateY(2px);
-  background: #2980b9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(to bottom, #3a5c99, #2980b9);
 }
 
 .dice-btn.has-selection {
-  background: #27ae60;
+  background: linear-gradient(to bottom, #2ecc71, #27ae60);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 0 8px rgba(46, 204, 113, 0.5);
 }
 
 .dice-count {
   position: absolute;
   top: 5px;
   right: 5px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.has-selection .dice-count {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 
 /* Action buttons */
@@ -159,84 +183,131 @@ html, body {
 }
 
 #roll-btn, #clear-btn {
-  padding: 12px 0;
+  padding: 14px 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   color: white;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   flex: 1;
   max-width: 180px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 #roll-btn {
-  background: #2ecc71;
+  background: linear-gradient(to bottom, #2ecc71, #27ae60);
   opacity: 0.7;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 #roll-btn.active {
   opacity: 1;
   transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 0 15px rgba(46, 204, 113, 0.5);
 }
 
 #roll-btn:active {
   transform: translateY(2px) scale(1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 #clear-btn {
-  background: #e74c3c;
+  background: linear-gradient(to bottom, #e74c3c, #c0392b);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 #clear-btn:active {
   transform: translateY(2px);
-  background: #c0392b;
+  background: linear-gradient(to bottom, #c0392b, #a5281b);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 /* Settings button */
 #settings-btn {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   font-size: 24px;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#settings-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Critical success/fail animations */
 .critical-success {
   color: #2ecc71 !important;
-  animation: pulse 0.5s ease-in-out 2;
+  animation: pulse-success 0.5s ease-in-out 2;
+  text-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
 }
 
 .critical-fail {
   color: #e74c3c !important;
-  animation: pulse 0.5s ease-in-out 2;
+  animation: pulse-fail 0.5s ease-in-out 2;
+  text-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
 }
 
-@keyframes pulse {
+@keyframes pulse-success {
   0% {
     transform: scale(1);
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
   }
   50% {
     transform: scale(1.2);
+    text-shadow: 0 0 20px rgba(46, 204, 113, 0.8);
   }
   100% {
     transform: scale(1);
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+  }
+}
+
+@keyframes pulse-fail {
+  0% {
+    transform: scale(1);
+    text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+  }
+  50% {
+    transform: scale(1.2);
+    text-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
   }
 }
 
 /* Settings Page Styles */
 .back-btn {
   padding: 8px 15px;
-  background: #3498db;
+  background: linear-gradient(to bottom, #4b6cb7, #3498db);
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   color: white;
   font-size: 16px;
   cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.back-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .settings-content {
@@ -252,9 +323,13 @@ html, body {
 .settings-section-title {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;
-  padding-bottom: 5px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: #3498db;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 16px;
 }
 
 .colorset-grid {
@@ -265,18 +340,27 @@ html, body {
 
 .colorset-item {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 12px;
+  padding: 14px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.colorset-item:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .colorset-item.active {
-  background: rgba(52, 152, 219, 0.3);
-  box-shadow: 0 0 0 2px #3498db;
+  background: rgba(52, 152, 219, 0.2);
+  box-shadow: 0 0 0 2px #3498db, 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
 }
 
 .colorset-preview {
@@ -323,14 +407,23 @@ html, body {
 .save-btn {
   width: 100%;
   max-width: 300px;
-  padding: 12px;
-  background: #2ecc71;
+  padding: 14px;
+  background: linear-gradient(to bottom, #2ecc71, #27ae60);
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   color: white;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.save-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 /* For colorset preview backgrounds */
@@ -415,6 +508,8 @@ html, body {
 .tab.active {
   border-bottom-color: #3498db;
   font-weight: bold;
+  color: #3498db;
+  background: rgba(52, 152, 219, 0.1);
 }
 
 .tab-content {
@@ -435,47 +530,61 @@ html, body {
 }
 
 .filter-btn {
-  padding: 6px 12px;
+  padding: 8px 14px;
   background: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
   color: white;
   margin-right: 8px;
   white-space: nowrap;
   font-size: 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .filter-btn.active {
-  background: #3498db;
+  background: linear-gradient(to bottom, #4b6cb7, #3498db);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  border-color: transparent;
+}
+
+.filter-btn:active {
+  transform: translateY(1px);
 }
 
 /* Sliders and checkboxes */
 .slider {
   -webkit-appearance: none;
   appearance: none;
-  height: 8px;
-  border-radius: 4px;
-  background: #555;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(to right, #555, #666);
   outline: none;
   width: 100%;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: #3498db;
   cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(52, 152, 219, 0.5);
 }
 
 .slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: #3498db;
   cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(52, 152, 219, 0.5);
 }
 
 /* Responsive adjustments */
@@ -491,5 +600,54 @@ html, body {
   
   #roll-btn, #clear-btn {
     padding: 10px 0;
+  }
+}
+
+/* iPhone SE and small devices */
+@media (max-width: 375px) {
+  .dice-grid {
+    gap: 8px;
+  }
+  
+  .dice-btn {
+    font-size: 16px;
+  }
+  
+  .dice-count {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+  
+  #roll-result {
+    font-size: 28px;
+  }
+  
+  #roll-details {
+    font-size: 12px;
+  }
+  
+  .action-buttons {
+    gap: 15px;
+  }
+}
+
+/* Tablet optimization */
+@media (min-width: 768px) {
+  .dice-grid {
+    max-width: 600px;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  
+  .action-buttons {
+    max-width: 600px;
+  }
+  
+  #dice-controls {
+    height: 20%;
+  }
+  
+  #dice-box {
+    height: 72.5%;
   }
 }
