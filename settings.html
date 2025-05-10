@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Mobile Dice Roller - Settings</title>
   <style>
     html, body {
@@ -381,9 +385,12 @@
       </div>
     </div>
     
-    <!-- Footer with save button -->
+    <!-- Footer with save and reset buttons -->
     <div class="settings-footer">
-      <button class="save-btn" id="save-settings">Save Changes</button>
+      <div style="display: flex; width: 100%; max-width: 300px; gap: 10px;">
+        <button class="reset-btn" id="reset-settings" style="flex: 1; padding: 12px; background: #e74c3c; border: none; border-radius: 8px; color: white; font-size: 16px; font-weight: bold; cursor: pointer;">Reset</button>
+        <button class="save-btn" id="save-settings" style="flex: 2;">Save Changes</button>
+      </div>
     </div>
   </div>
 
@@ -637,11 +644,11 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Current settings (default values)
-      let currentSettings = {
-        colorset: null,
-        texture: null,
-        material: null,
+      // Default settings
+      const DEFAULT_SETTINGS = {
+        colorset: 'white',
+        texture: 'none',
+        material: 'plastic',
         surface: 'green-felt',
         gravity: 200,
         strength: 1.5,
@@ -649,6 +656,9 @@
         shadows: true,
         sounds: true
       };
+      
+      // Current settings (initialized with default values)
+      let currentSettings = {...DEFAULT_SETTINGS};
       
       // Try to load saved settings from localStorage
       try {
@@ -735,13 +745,20 @@
           
           // Add texture overlay if applicable
           if (colorset.texture && colorset.texture !== 'none') {
-            const textureClass = Array.isArray(colorset.texture) 
-              ? `texture-${colorset.texture[0]}` 
-              : `texture-${colorset.texture}`;
+            let textureClass;
+            if (Array.isArray(colorset.texture)) {
+              // Use the first texture from the array
+              textureClass = `texture-${colorset.texture[0]}`;
+            } else {
+              textureClass = `texture-${colorset.texture}`;
+            }
               
             const textureOverlay = document.createElement('div');
             textureOverlay.className = `texture-overlay ${textureClass}`;
             preview.appendChild(textureOverlay);
+            
+            // Store the texture in the dataset for selection
+            item.dataset.texture = Array.isArray(colorset.texture) ? colorset.texture[0] : colorset.texture;
           }
           
           const name = document.createElement('div');
@@ -768,6 +785,11 @@
             
             // Update current settings
             currentSettings.colorset = key;
+            
+            // Update texture if this colorset has a texture
+            if (item.dataset.texture) {
+              currentSettings.texture = item.dataset.texture;
+            }
           });
           
           colorsetGrid.appendChild(item);
@@ -851,6 +873,53 @@
       
       document.getElementById('sounds-checkbox').addEventListener('change', (e) => {
         currentSettings.sounds = e.target.checked;
+      });
+      
+      // Reset settings function
+      function resetSettings() {
+        // Reset current settings to defaults
+        currentSettings = {...DEFAULT_SETTINGS};
+        
+        // Update UI with default settings
+        updateUIFromSettings(currentSettings);
+        
+        // Reset all active selections
+        document.querySelectorAll('.colorset-item.active').forEach(item => {
+          item.classList.remove('active');
+        });
+        
+        // Select default colorset
+        const defaultColorsetItem = document.querySelector(`[data-colorset="${DEFAULT_SETTINGS.colorset}"]`);
+        if (defaultColorsetItem) defaultColorsetItem.classList.add('active');
+        
+        // Select default material
+        const defaultMaterialItem = document.querySelector(`[data-material="${DEFAULT_SETTINGS.material}"]`);
+        if (defaultMaterialItem) defaultMaterialItem.classList.add('active');
+        
+        // Select default surface
+        const defaultSurfaceItem = document.querySelector(`[data-surface="${DEFAULT_SETTINGS.surface}"]`);
+        if (defaultSurfaceItem) defaultSurfaceItem.classList.add('active');
+        
+        // Reset sliders
+        document.getElementById('gravity-slider').value = DEFAULT_SETTINGS.gravity;
+        document.getElementById('gravity-value').textContent = DEFAULT_SETTINGS.gravity;
+        
+        document.getElementById('strength-slider').value = DEFAULT_SETTINGS.strength;
+        document.getElementById('strength-value').textContent = DEFAULT_SETTINGS.strength;
+        
+        document.getElementById('volume-slider').value = DEFAULT_SETTINGS.volume;
+        document.getElementById('volume-value').textContent = DEFAULT_SETTINGS.volume;
+        
+        // Reset checkboxes
+        document.getElementById('shadows-checkbox').checked = DEFAULT_SETTINGS.shadows;
+        document.getElementById('sounds-checkbox').checked = DEFAULT_SETTINGS.sounds;
+      }
+      
+      // Reset settings button
+      document.getElementById('reset-settings').addEventListener('click', () => {
+        if (confirm('Are you sure you want to reset all settings to default?')) {
+          resetSettings();
+        }
       });
       
       // Save settings
