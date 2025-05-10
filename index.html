@@ -26,19 +26,20 @@
     
     <!-- Main area for dice rolling -->
     <div id="main-area">
-      <!-- Empty main area -->
+      <!-- Empty main area - removed selection display -->
+
     </div>
     
     <!-- Bottom dice controls -->
     <div id="dice-controls">
       <div class="dice-grid">
-        <button class="dice-btn" id="roll-d2">d2 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d4">d4 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d6">d6 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d8">d8 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d10">d10 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d12">d12 <span class="dice-count">0</span></button>
         <button class="dice-btn" id="roll-d20">d20 <span class="dice-count">0</span></button>
+        <button class="dice-btn" id="roll-d100">% <span class="dice-count">0</span></button>
       </div>
       
       <!-- Roll and Clear buttons -->
@@ -58,44 +59,20 @@
     import DiceBox from "https://unpkg.com/@3d-dice/dice-box-threejs@0.0.12/dist/dice-box-threejs.es.js";
     
     // Initialize the 3D dice box
-    let settings = {
-      colorset: null,
-      texture: null,
-      material: null,
-      surface: 'green-felt',
-      gravity: 200,
-      strength: 1.5,
-      volume: 100,
-      shadows: true,
-      sounds: true
-    };
-    
-    // Try to load saved settings from localStorage
-    try {
-      const savedSettings = localStorage.getItem('diceSettings');
-      if (savedSettings) {
-        settings = {...settings, ...JSON.parse(savedSettings)};
-      }
-    } catch (e) {
-      console.error('Error loading saved settings:', e);
-    }
-    
-    // Initialize the 3D dice box with the settings
     const Box = new DiceBox("#dice-box", {
       assetPath: "assets/",
       framerate: (1/60),
-      sounds: settings.sounds,
-      volume: settings.volume,
+      sounds: true,
+      volume: 100,
       color_spotlight: 0xefdfd5,
-      shadows: settings.shadows,
-      sound_dieMaterial: settings.material,
-      theme_colorset: settings.colorset, // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
-      // theme_texture: settings.texture, // see available textures in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/texturelist.js
-      theme_surface: 'green-felt', // settings.surface, // "felt", "metal", "wood_table", "wood_tray" 
-      gravity_multiplier: settings.gravity,
+      shadows: true,
+      theme_surface: "green-felt",
+      sound_dieMaterial: 'plastic',
+      theme_colorset: "radiant",
+      gravity_multiplier: 200,
       light_intensity: 1,
       baseScale: 100,
-      strength: settings.strength,
+      strength: 1.5,
       onRollComplete: () => {},
       onAddDiceComplete: () => {},
       onRemoveDiceComplete: () => {}
@@ -104,23 +81,24 @@
     // Variables to store DOM elements and dice counts
     let rollResult;
     let rollDetails;
+    let selectionContainer;
     const diceSelections = {
-      d2: 0,
       d4: 0,
       d6: 0,
       d8: 0,
       d10: 0,
       d12: 0,
-      d20: 0
+      d20: 0,
+      d100: 0
     };
     
-    // Helper function to update the dice selection display in roll-details
+    // Helper function to update the dice selection display
     function updateSelectionDisplay() {
       // Get total dice count
       const totalDiceCount = Object.values(diceSelections).reduce((sum, count) => sum + count, 0);
       
       // Check if any dice are selected
-      const hasSelections = Object.values(diceSelections).some(count => count > 0);
+      const hasSelections = totalDiceCount > 0;
       
       // Create a string representation of the selection for roll details
       const selections = [];
@@ -132,19 +110,9 @@
       
       // Update roll details to show current selection
       if (hasSelections) {
-        // Create a string representation of the selection
-        const selections = [];
-        for (const [type, count] of Object.entries(diceSelections)) {
-          if (count > 0) {
-            selections.push(`${count}${type}`);
-          }
-        }
-        
-        // Update roll-details with the selection text
         rollDetails.textContent = selections.join(' + ');
       } else {
-        // If no dice are selected, display a prompt
-        rollDetails.textContent = 'Select dice to roll';
+        rollDetails.textContent = "Roll the dice";
       }
       
       // Update all dice count displays
@@ -314,6 +282,9 @@
         // Update display with results
         rollResult.textContent = total;
         rollDetails.textContent = breakdown || notation;
+        
+        // Check for critical rolls (natural 20s, etc.)
+        checkForCriticals(results);
         
       }).catch(error => {
         console.error("Error rolling dice:", error);
