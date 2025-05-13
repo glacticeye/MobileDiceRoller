@@ -647,7 +647,7 @@
       // Default settings
       const DEFAULT_SETTINGS = {
         colorset: 'white',
-        texture: 'none',
+        texture: null, // 'none' is an actual texture name, null means no texture
         material: 'plastic',
         surface: 'green-felt',
         gravity: 200,
@@ -785,10 +785,13 @@
             
             // Update current settings
             currentSettings.colorset = key;
-            
-            // Update texture if this colorset has a texture
+
+            // Update texture if this colorset has a texture, otherwise clear it
             if (item.dataset.texture) {
               currentSettings.texture = item.dataset.texture;
+            } else {
+              // Reset texture when selecting a colorset without texture
+              currentSettings.texture = null;
             }
           });
           
