@@ -67,7 +67,7 @@
       color_spotlight: 0xefdfd5,
       shadows: true,
       theme_surface: "green-felt",
-      sound_dieMaterial: 'glass', // "none" | "metal" | "wood" | "glass" | "plastic"
+      sound_surface: null, // Added to match theme_surface
       theme_colorset: "white", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
       gravity_multiplier: 400,
       light_intensity: 0.7,
@@ -369,10 +369,11 @@
     function resetToDefaultSettings() {
       // Default settings 
       const defaultSettings = {
-        colorset: 'white',
+        colorset: null,
         texture: null,
-        material: 'plastic',
-        surface: 'green-felt',
+        material: null,
+        surface: null,
+        sound_surface: null,
         gravity: 200,
         strength: 1.5,
         volume: 100,
@@ -411,8 +412,6 @@
       // Apply material
       if (settings.material) {
         config.theme_material = settings.material;
-        // Also set sound material based on the selected material
-        config.sound_dieMaterial = settings.material;
       }
 
       // Apply surface
