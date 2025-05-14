@@ -64,15 +64,17 @@
       framerate: (1/60),
       sounds: true,
       volume: 100,
-      color_spotlight: 0xefdfd5,
+      color_spotlight: null,
       shadows: true,
-      theme_surface: "green-felt",
-      sound_dieMaterial: 'glass', // "none" | "metal" | "wood" | "glass" | "plastic"
-      theme_colorset: "white", // see available colorsets in https://github.com/3d-dice/dice-box-threejs/blob/main/src/const/colorsets.js
+      theme_colorset: "white",
+      sound_dieMaterial: null,
+      theme_texture: null,
+      theme_material: null,
+      theme_surface: 'green-felt',
       gravity_multiplier: 400,
-      light_intensity: 0.7,
-      baseScale: 100,
-      strength: 1.5,
+      light_intensity: 1,
+      baseScale: 150,
+      strength: 2.5,
       onRollComplete: () => {},
       onAddDiceComplete: () => {},
       onRemoveDiceComplete: () => {}
@@ -369,15 +371,14 @@
     function resetToDefaultSettings() {
       // Default settings 
       const defaultSettings = {
-        colorset: 'white',
-        texture: null,
-        material: 'plastic',
+        colorset: 'fire',
         surface: 'green-felt',
-        gravity: 200,
-        strength: 1.5,
+        gravity: 100,
+        strength: 1,
         volume: 100,
         shadows: true,
-        sounds: true
+        sounds: true,
+        baseScale: 100,
       };
       
       // Apply default settings
@@ -401,23 +402,6 @@
       // Apply colorset
       if (settings.colorset) {
         config.theme_colorset = settings.colorset;
-      }
-      
-      // Apply texture
-      if (settings.texture) {
-        config.theme_texture = settings.texture;
-      }
-      
-      // Apply material
-      if (settings.material) {
-        config.theme_material = settings.material;
-        // Also set sound material based on the selected material
-        config.sound_dieMaterial = settings.material;
-      }
-
-      // Apply surface
-      if (settings.surface) {
-        config.theme_surface = settings.surface;
       }
       
       // Apply gravity
