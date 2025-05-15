@@ -1007,7 +1007,14 @@
         volume: 100,
         shadows: true,
         sounds: true,
-        customColorset: null // Ensure custom colorset is reset as well
+        customColorset: {
+          foreground: "#000000",
+          background: "#FFFFFF",
+          outline: "#FFFFFF",
+          edge: "#FFFFFF",
+          texture: "wood",
+          material: 'wood'
+        }
       };
       
       // Current settings (initialized with default values)
@@ -1015,12 +1022,12 @@
       
       // Custom colorset settings
       let customDiceSettings = {
-        foreground: [],
-        background: [],
-        outline: [],
-        edge: [],
-        texture: null,
-        material: 'plastic'
+          foreground: "#000000",
+          background: "#FFFFFF",
+          outline: "#FFFFFF",
+          edge: "#FFFFFF",
+          texture: "wood",
+          material: 'wood'
       };
       
       // Try to load saved settings from localStorage
@@ -1267,12 +1274,12 @@
         
         // Reset custom dice settings
         customDiceSettings = {
-          foreground: [],
-          background: [],
-          outline: [],
-          edge: [],
-          texture: null,
-          material: 'plastic'
+          foreground: "#000000",
+          background: "#FFFFFF",
+          outline: "#FFFFFF",
+          edge: "#FFFFFF",
+          texture: "wood",
+          material: 'wood'
         };
         
         // Clear all color chips
@@ -1280,7 +1287,7 @@
         updateColorChips('background', []);
         updateColorChips('outline', []);
         updateColorChips('edge', []);
-        
+
         // Update UI with default settings
         updateUIFromSettings(currentSettings);
         
