@@ -100,6 +100,7 @@
     let rollResult;
     let rollDetails;
     let selectionContainer;
+    let currentSettings = {}; // Store current dice settings globally
     const diceSelections = {
       d4: 0,
       d6: 0,
@@ -205,6 +206,7 @@
         try {
           const useCustomDice = localStorage.getItem('useCustomDice') === 'true';
           customDiceToggle.checked = useCustomDice;
+          console.log('Initialized toggle state:', useCustomDice);
         } catch (e) {
           console.error('Error loading toggle state:', e);
         }
@@ -213,11 +215,18 @@
         customDiceToggle.addEventListener('change', () => {
           // Save toggle state
           localStorage.setItem('useCustomDice', customDiceToggle.checked);
+          console.log('Toggle changed to:', customDiceToggle.checked);
           
           // Apply current settings with new toggle state
           applyDiceSettings(currentSettings);
         });
       }
+      
+      // Make sure we use the correct dice style based on toggle state
+      // even when first loading the page
+      setTimeout(() => {
+        applyDiceSettings(currentSettings);
+      }, 500);
       
       // Listen for settings changes when returning from settings page
       window.addEventListener('pageshow', (event) => {
@@ -397,6 +406,9 @@
         const savedSettings = localStorage.getItem('diceSettings');
         if (savedSettings) {
           const settings = JSON.parse(savedSettings);
+          // Store the settings globally to access them later
+          currentSettings = settings;
+          // Apply the settings
           applyDiceSettings(settings);
         }
       } catch (e) {
@@ -439,19 +451,31 @@
       const config = {};
       
       // Check the toggle state to determine which dice style to use
-      const useCustomDice = document.getElementById('custom-dice-toggle') && 
-                           document.getElementById('custom-dice-toggle').checked;
+      const toggleElement = document.getElementById('custom-dice-toggle');
+      
+      // If the toggle element exists, use its state, otherwise check localStorage
+      let useCustomDice;
+      if (toggleElement) {
+        useCustomDice = toggleElement.checked;
+      } else {
+        // If we're not on the page with the toggle, use the stored preference
+        useCustomDice = localStorage.getItem('useCustomDice') === 'true';
+      }
+      
+      console.log('Using custom dice:', useCustomDice);
       
       // Apply custom colorset if toggle is on and custom settings exist
       if (useCustomDice && settings.customColorset) {
         config.theme_customColorset = settings.customColorset;
         // When using custom colorset, clear the theme_colorset
         config.theme_colorset = null;
+        console.log('Applied custom colorset');
       } else if (settings.colorset) {
         // When toggle is off or no custom dice, use theme colorset
         config.theme_colorset = settings.colorset;
         // When using theme colorset, clear any custom colorset
         config.theme_customColorset = null;
+        console.log('Applied theme colorset:', settings.colorset);
       }
 
       // Apply material

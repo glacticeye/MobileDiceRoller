@@ -225,6 +225,125 @@ html, body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
+/* Dice Style Toggle */
+.dice-style-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.toggle-label {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: center;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  height: 28px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4b6cb7;
+  transition: .4s;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 52px;
+  left: 4px;
+  bottom: 4px;
+  background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+  transition: .4s;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+input:checked + .toggle-slider {
+  background-color: #2ecc71;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(60px);
+}
+
+.toggle-labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  pointer-events: none;
+}
+
+.toggle-label-left, .toggle-label-right {
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s;
+}
+
+.toggle-label-left {
+  margin-right: 46px;
+}
+
+.toggle-label-right {
+  margin-left: 46px;
+}
+
+input:checked + .toggle-slider + .toggle-labels .toggle-label-left {
+  opacity: 0.5;
+  transform: scale(0.9);
+}
+
+input:checked + .toggle-slider + .toggle-labels .toggle-label-right {
+  opacity: 1;
+  transform: scale(1.1);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+input:not(:checked) + .toggle-slider + .toggle-labels .toggle-label-left {
+  opacity: 1;
+  transform: scale(1.1);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+input:not(:checked) + .toggle-slider + .toggle-labels .toggle-label-right {
+  opacity: 0.5;
+  transform: scale(0.9);
+}
+
 /* Settings button */
 #settings-btn {
   background: rgba(255, 255, 255, 0.1);
@@ -601,6 +720,36 @@ html, body {
   
   #roll-btn, #clear-btn {
     padding: 10px 0;
+  }
+  
+  .dice-style-toggle {
+    margin-top: 5px;
+  }
+  
+  .toggle {
+    width: 100px;
+    height: 24px;
+  }
+  
+  .toggle-slider:before {
+    height: 16px;
+    width: 42px;
+  }
+  
+  input:checked + .toggle-slider:before {
+    transform: translateX(50px);
+  }
+  
+  .toggle-label-left, .toggle-label-right {
+    font-size: 10px;
+  }
+  
+  .toggle-label-left {
+    margin-right: 30px;
+  }
+  
+  .toggle-label-right {
+    margin-left: 30px;
   }
 }
 
