@@ -71,6 +71,7 @@
       theme_texture: null,
       theme_material: "plastic",
       theme_surface: 'green-felt',
+      theme_customColorset: null, // Add support for custom colorset
       gravity_multiplier: 400,
       // light_intensity: 1,
       baseScale: 150,
@@ -380,6 +381,7 @@
         shadows: true,
         sounds: true,
         baseScale: 100,
+        customColorset: null
       };
       
       // Apply default settings
@@ -400,9 +402,15 @@
       
       const config = {};
       
-      // Apply colorset
-      if (settings.colorset) {
+      // Apply colorset or custom colorset (custom takes precedence)
+      if (settings.customColorset) {
+        config.theme_customColorset = settings.customColorset;
+        // When using custom colorset, clear the theme_colorset
+        config.theme_colorset = null;
+      } else if (settings.colorset) {
         config.theme_colorset = settings.colorset;
+        // When using theme colorset, clear any custom colorset
+        config.theme_customColorset = null;
       }
 
       // Apply material

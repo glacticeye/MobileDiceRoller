@@ -263,6 +263,178 @@
     .filter-btn.active {
       background: #3498db;
     }
+
+    /* Custom Dice Factory Styles */
+    .color-picker-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .color-picker-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .color-picker-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .color-picker-group input[type="color"] {
+      width: 100%;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .add-color-btn {
+      background: #3498db;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      padding: 8px;
+      margin-top: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .color-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .color-chip {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .color-chip .remove-color {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .color-chip:hover .remove-color {
+      opacity: 1;
+    }
+
+    .texture-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .texture-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .texture-item.active {
+      background: rgba(52, 152, 219, 0.2);
+      box-shadow: 0 0 0 2px #3498db, 0 4px 8px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .texture-preview {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .texture-name {
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .custom-dice-preview {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .preview-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .preview-container {
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-dice {
+      width: 100px;
+      height: 100px;
+      background-color: var(--bg-color, #ffffff);
+      border: 2px solid var(--outline-color, #000000);
+      border-radius: 10px;
+      position: relative;
+      transform: rotate(45deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--fg-color, #000000);
+      overflow: hidden;
+    }
+
+    .preview-dice::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.5;
+      background-image: var(--texture-image, none);
+    }
+
+    .preview-dice::after {
+      content: "20";
+      transform: rotate(-45deg);
+    }
   </style>
 </head>
 <body>
@@ -277,7 +449,7 @@
     <!-- Tab Navigation -->
     <div class="tabs">
       <div class="tab active" data-tab="colorsets">Themes</div>
-      <div class="tab" data-tab="materials">Materials</div>
+      <div class="tab" data-tab="customdice">Custom Dice</div>
       <div class="tab" data-tab="other">Options</div>
     </div>
     
@@ -285,22 +457,22 @@
     <div class="settings-content">
       <!-- Colorsets Tab -->
       <div class="tab-content active" id="colorsets-tab">
-        <div class="filter-controls">
-          <button class="filter-btn active" data-category="all">All</button>
-          <button class="filter-btn" data-category="Damage Types">Damage Types</button>
-          <button class="filter-btn" data-category="Elements">Elements</button>
-          <button class="filter-btn" data-category="Colors">Colors</button>
-          <button class="filter-btn" data-category="Custom Sets">Custom Sets</button>
-          <button class="filter-btn" data-category="Other">Other</button>
+        <div class="settings-section">
+          <div class="settings-section-title">Color Themes</div>
+          <div class="filter-controls">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="Damage Types">Damage Types</button>
+            <button class="filter-btn" data-category="Elements">Elements</button>
+            <button class="filter-btn" data-category="Colors">Colors</button>
+            <button class="filter-btn" data-category="Custom Sets">Custom Sets</button>
+            <button class="filter-btn" data-category="Other">Other</button>
+          </div>
+          
+          <div class="colorset-grid" id="colorset-grid">
+            <!-- Colorset items will be generated here -->
+          </div>
         </div>
         
-        <div class="colorset-grid" id="colorset-grid">
-          <!-- Colorset items will be generated here -->
-        </div>
-      </div>
-      
-      <!-- Materials Tab -->
-      <div class="tab-content" id="materials-tab">
         <div class="settings-section">
           <div class="settings-section-title">Dice Materials</div>
           <div class="colorset-grid">
@@ -335,6 +507,129 @@
           </div>
         </div>
       </div>
+      
+      <!-- Custom Dice Tab -->
+      <div class="tab-content" id="customdice-tab">
+        <div class="settings-section">
+          <div class="settings-section-title">Custom Dice Factory</div>
+          <div class="color-picker-container">
+            <div class="color-picker-group">
+              <label>Foreground Color</label>
+              <input type="color" id="foreground-color" value="#ffffff">
+              <button class="add-color-btn" data-target="foreground">+ Add Color</button>
+              <div class="color-chips" id="foreground-colors"></div>
+            </div>
+            
+            <div class="color-picker-group">
+              <label>Background Color</label>
+              <input type="color" id="background-color" value="#000000">
+              <button class="add-color-btn" data-target="background">+ Add Color</button>
+              <div class="color-chips" id="background-colors"></div>
+            </div>
+            
+            <div class="color-picker-group">
+              <label>Outline Color</label>
+              <input type="color" id="outline-color" value="#000000">
+              <button class="add-color-btn" data-target="outline">+ Add Color</button>
+              <div class="color-chips" id="outline-colors"></div>
+            </div>
+            
+            <div class="color-picker-group">
+              <label>Edge Color</label>
+              <input type="color" id="edge-color" value="#000000">
+              <button class="add-color-btn" data-target="edge">+ Add Color</button>
+              <div class="color-chips" id="edge-colors"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <div class="settings-section-title">Texture Selection</div>
+          <div class="texture-selector">
+            <div class="texture-grid">
+              <div class="texture-item" data-texture="none">
+                <div class="texture-preview">None</div>
+                <div class="texture-name">None</div>
+              </div>
+              <div class="texture-item" data-texture="marble">
+                <div class="texture-preview texture-marble"></div>
+                <div class="texture-name">Marble</div>
+              </div>
+              <div class="texture-item" data-texture="ice">
+                <div class="texture-preview texture-ice"></div>
+                <div class="texture-name">Ice</div>
+              </div>
+              <div class="texture-item" data-texture="fire">
+                <div class="texture-preview texture-fire"></div>
+                <div class="texture-name">Fire</div>
+              </div>
+              <div class="texture-item" data-texture="cloudy">
+                <div class="texture-preview texture-cloudy"></div>
+                <div class="texture-name">Cloudy</div>
+              </div>
+              <div class="texture-item" data-texture="speckles">
+                <div class="texture-preview texture-speckles"></div>
+                <div class="texture-name">Speckles</div>
+              </div>
+              <div class="texture-item" data-texture="metal">
+                <div class="texture-preview texture-metal"></div>
+                <div class="texture-name">Metal</div>
+              </div>
+              <div class="texture-item" data-texture="wood">
+                <div class="texture-preview texture-wood"></div>
+                <div class="texture-name">Wood</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <div class="settings-section-title">Material Selection</div>
+          <div class="material-selector">
+            <div class="colorset-grid">
+              <div class="colorset-item" data-custom-material="metal">
+                <div class="colorset-preview">
+                  <div class="texture-overlay texture-metal"></div>
+                  M
+                </div>
+                <div class="colorset-name">Metal</div>
+              </div>
+              <div class="colorset-item" data-custom-material="wood">
+                <div class="colorset-preview">
+                  <div class="texture-overlay texture-wood"></div>
+                  W
+                </div>
+                <div class="colorset-name">Wood</div>
+              </div>
+              <div class="colorset-item" data-custom-material="glass">
+                <div class="colorset-preview">
+                  <div class="texture-overlay texture-stainedglass"></div>
+                  G
+                </div>
+                <div class="colorset-name">Glass</div>
+              </div>
+              <div class="colorset-item" data-custom-material="plastic">
+                <div class="colorset-preview">
+                  <div class="texture-overlay texture-speckles"></div>
+                  P
+                </div>
+                <div class="colorset-name">Plastic</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <div class="custom-dice-preview" id="custom-dice-preview">
+            <div class="preview-title">Preview</div>
+            <div class="preview-container">
+              <div class="preview-dice"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Materials Tab - Content removed and moved to Themes tab -->
         
       <!-- Other Settings Tab -->
       <div class="tab-content" id="other-tab">
@@ -651,11 +946,26 @@
       // Current settings (initialized with default values)
       let currentSettings = {...DEFAULT_SETTINGS};
       
+      // Custom colorset settings
+      let customDiceSettings = {
+        foreground: [],
+        background: [],
+        outline: [],
+        edge: [],
+        texture: null,
+        material: 'plastic'
+      };
+      
       // Try to load saved settings from localStorage
       try {
         const savedSettings = localStorage.getItem('diceSettings');
         if (savedSettings) {
           currentSettings = {...currentSettings, ...JSON.parse(savedSettings)};
+          
+          // Load custom colorset if it exists
+          if (currentSettings.customColorset) {
+            customDiceSettings = {...customDiceSettings, ...currentSettings.customColorset};
+          }
           
           // Update UI based on loaded settings
           updateUIFromSettings(currentSettings);
@@ -692,6 +1002,32 @@
         if (settings.material) {
           const materialItem = document.querySelector(`[data-material="${settings.material}"]`);
           if (materialItem) materialItem.classList.add('active');
+        }
+        
+        // Update custom dice UI if custom colorset exists
+        if (settings.customColorset) {
+          const customColors = settings.customColorset;
+          
+          // Update color chips for each color type
+          updateColorChips('foreground', customColors.foreground || []);
+          updateColorChips('background', customColors.background || []);
+          updateColorChips('outline', customColors.outline || []);
+          updateColorChips('edge', customColors.edge || []);
+          
+          // Update texture selection
+          if (customColors.texture) {
+            const textureItem = document.querySelector(`[data-texture="${customColors.texture}"]`);
+            if (textureItem) textureItem.classList.add('active');
+          }
+          
+          // Update material selection
+          if (customColors.material) {
+            const materialItem = document.querySelector(`[data-custom-material="${customColors.material}"]`);
+            if (materialItem) materialItem.classList.add('active');
+          }
+          
+          // Update preview
+          updateCustomDicePreview();
         }
       }
       
@@ -906,8 +1242,22 @@
       // Save settings
       document.getElementById('save-settings').addEventListener('click', () => {
         try {
-          // Validate settings before saving
+          // Validate and prepare custom dice settings
+          const hasCustomDice = Object.values(customDiceSettings).some(value => {
+            if (Array.isArray(value)) {
+              return value.length > 0;
+            }
+            return value !== null;
+          });
           
+          // Only add custom colorset if it has settings
+          if (hasCustomDice) {
+            currentSettings.customColorset = {...customDiceSettings};
+          } else {
+            currentSettings.customColorset = null;
+          }
+          
+          // Save all settings
           localStorage.setItem('diceSettings', JSON.stringify(currentSettings));
           
           // Provide feedback
@@ -957,6 +1307,145 @@
         } else {
           window.location.href = 'index.html';
         }
+      });
+      
+      // Custom Dice Factory functions
+      
+      // Function to add a color chip
+      function addColorChip(type, color) {
+        // Don't add duplicate colors
+        if (customDiceSettings[type].includes(color)) {
+          return;
+        }
+        
+        // Add to our data model
+        customDiceSettings[type].push(color);
+        
+        // Update the UI
+        updateColorChips(type, customDiceSettings[type]);
+        
+        // Update preview
+        updateCustomDicePreview();
+      }
+      
+      // Function to remove a color chip
+      function removeColorChip(type, index) {
+        if (index >= 0 && index < customDiceSettings[type].length) {
+          // Remove from our data model
+          customDiceSettings[type].splice(index, 1);
+          
+          // Update the UI
+          updateColorChips(type, customDiceSettings[type]);
+          
+          // Update preview
+          updateCustomDicePreview();
+        }
+      }
+      
+      // Function to update color chips display
+      function updateColorChips(type, colors) {
+        const container = document.getElementById(`${type}-colors`);
+        if (!container) return;
+        
+        // Clear container
+        container.innerHTML = '';
+        
+        // Add a chip for each color
+        colors.forEach((color, index) => {
+          const chip = document.createElement('div');
+          chip.className = 'color-chip';
+          chip.style.backgroundColor = color;
+          
+          // Add remove button
+          const removeBtn = document.createElement('div');
+          removeBtn.className = 'remove-color';
+          removeBtn.textContent = '×';
+          removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeColorChip(type, index);
+          });
+          
+          chip.appendChild(removeBtn);
+          container.appendChild(chip);
+        });
+      }
+      
+      // Function to update the custom dice preview
+      function updateCustomDicePreview() {
+        const previewDice = document.querySelector('.preview-dice');
+        if (!previewDice) return;
+        
+        // Set background color - use first color if array, or direct value
+        const bgColor = customDiceSettings.background.length > 0 ? 
+                        customDiceSettings.background[0] : '#ffffff';
+        previewDice.style.setProperty('--bg-color', bgColor);
+        
+        // Set foreground color - use first color if array, or direct value
+        const fgColor = customDiceSettings.foreground.length > 0 ? 
+                        customDiceSettings.foreground[0] : '#000000';
+        previewDice.style.setProperty('--fg-color', fgColor);
+        
+        // Set outline color
+        const outlineColor = customDiceSettings.outline.length > 0 ? 
+                            customDiceSettings.outline[0] : 'transparent';
+        previewDice.style.borderColor = outlineColor;
+        
+        // Set texture
+        if (customDiceSettings.texture && customDiceSettings.texture !== 'none') {
+          previewDice.style.setProperty('--texture-image', `url('assets/textures/${customDiceSettings.texture}.webp')`);
+        } else {
+          previewDice.style.setProperty('--texture-image', 'none');
+        }
+      }
+      
+      // Set up color picker event listeners
+      document.querySelectorAll('.add-color-btn').forEach(btn => {
+        const type = btn.dataset.target;
+        const colorPicker = document.getElementById(`${type}-color`);
+        
+        btn.addEventListener('click', () => {
+          if (colorPicker) {
+            addColorChip(type, colorPicker.value);
+          }
+        });
+      });
+      
+      // Set up texture selection
+      document.querySelectorAll('.texture-item').forEach(item => {
+        item.addEventListener('click', () => {
+          // Remove active class from all texture items
+          document.querySelectorAll('.texture-item').forEach(el => {
+            el.classList.remove('active');
+          });
+          
+          // Add active class to clicked item
+          item.classList.add('active');
+          
+          // Update data model
+          customDiceSettings.texture = item.dataset.texture;
+          
+          // Update preview
+          updateCustomDicePreview();
+        });
+      });
+      
+      // Set up custom material selection
+      document.querySelectorAll('[data-custom-material]').forEach(item => {
+        item.addEventListener('click', () => {
+          // Remove active class from all material items
+          document.querySelectorAll('[data-custom-material]').forEach(el => {
+            el.classList.remove('active');
+          });
+          
+          // Add active class to clicked item
+          item.classList.add('active');
+          
+          // Update data model
+          customDiceSettings.material = item.dataset.customMaterial;
+          
+          // Update preview
+          updateCustomDicePreview();
+        });
       });
       
       // Set up tab navigation
