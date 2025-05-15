@@ -275,10 +275,8 @@
     
     <!-- Tab Navigation -->
     <div class="tabs">
-      <div class="tab active" data-tab="colorsets">Colorsets</div>
-      <div class="tab" data-tab="materials">Materials</div>
-      <div class="tab" data-tab="surface">Surface</div>
-      <div class="tab" data-tab="other">Other</div>
+      <div class="tab active" data-tab="colorsets">Themes</div>
+      <div class="tab" data-tab="other">Options</div>
     </div>
     
     <!-- Settings Content -->
@@ -299,55 +297,7 @@
         </div>
       </div>
       
-      <!-- Materials Tab -->
-      <div class="tab-content" id="materials-tab">
-        <div class="settings-section">
-          <div class="settings-section-title">Dice Materials</div>
-          <div class="colorset-grid">
-            <div class="colorset-item" data-material="metal">
-              <div class="colorset-preview">M</div>
-              <div class="colorset-name">Metal</div>
-            </div>
-            <div class="colorset-item" data-material="wood">
-              <div class="colorset-preview">W</div>
-              <div class="colorset-name">Wood</div>
-            </div>
-            <div class="colorset-item" data-material="glass">
-              <div class="colorset-preview">G</div>
-              <div class="colorset-name">Glass</div>
-            </div>
-            <div class="colorset-item" data-material="plastic">
-              <div class="colorset-preview">P</div>
-              <div class="colorset-name">Plastic</div>
-            </div>
-            <div class="colorset-item" data-material="none">
-              <div class="colorset-preview">-</div>
-              <div class="colorset-name">None</div>
-            </div>
-          </div>
-        </div>
-      </div>
       
-      <!-- Surface Tab -->
-      <div class="tab-content" id="surface-tab">
-        <div class="settings-section">
-          <div class="settings-section-title">Surface</div>
-          <div class="colorset-grid">
-            <div class="colorset-item" data-surface="green-felt">
-              <div class="colorset-preview">F</div>
-              <div class="colorset-name">Felt</div>
-            </div>
-            <div class="colorset-item" data-surface="metal">
-              <div class="colorset-preview">M</div>
-              <div class="colorset-name">Metal</div>
-            </div>
-            <div class="colorset-item" data-surface="wood_table">
-              <div class="colorset-preview">W</div>
-              <div class="colorset-name">Wood Table</div>
-            </div>
-          </div>
-        </div>
-      </div>
         
       <!-- Other Settings Tab -->
       <div class="tab-content" id="other-tab">
@@ -361,6 +311,10 @@
             <div>
               <label style="display: block; margin-bottom: 5px;">Toss Strength: <span id="strength-value">1.5</span></label>
               <input type="range" min="0.5" max="3" value="1.5" step="0.1" class="slider" id="strength-slider" style="width: 100%;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px;">Scale: <span id="scale-value">1.0</span></label>
+              <input type="range" min="0.5" max="2.0" value="1.0" step="0.1" class="slider" id="scale-slider" style="width: 100%;">
             </div>
           </div>
         </div>
@@ -648,10 +602,9 @@
       const DEFAULT_SETTINGS = {
         colorset: 'white',
         texture: null, // 'none' is an actual texture name, null means no texture
-        material: 'plastic',
-        surface: 'green-felt',
         gravity: 200,
         strength: 1.5,
+        baseScale: 1.0,
         volume: 100,
         shadows: true,
         sounds: true
@@ -682,6 +635,9 @@
         document.getElementById('strength-slider').value = settings.strength;
         document.getElementById('strength-value').textContent = settings.strength;
         
+        document.getElementById('scale-slider').value = settings.baseScale;
+        document.getElementById('scale-value').textContent = settings.baseScale;
+        
         document.getElementById('volume-slider').value = settings.volume;
         document.getElementById('volume-value').textContent = settings.volume;
         
@@ -695,15 +651,7 @@
           if (colorsetItem) colorsetItem.classList.add('active');
         }
         
-        if (settings.material) {
-          const materialItem = document.querySelector(`[data-material="${settings.material}"]`);
-          if (materialItem) materialItem.classList.add('active');
-        }
         
-        if (settings.surface) {
-          const surfaceItem = document.querySelector(`[data-surface="${settings.surface}"]`);
-          if (surfaceItem) surfaceItem.classList.add('active');
-        }
       }
       
       // Generate colorset items
@@ -818,38 +766,6 @@
         });
       });
       
-      // Set up material selection
-      document.querySelectorAll('#materials-tab .colorset-item').forEach(item => {
-        if (item.dataset.material === currentSettings.material) {
-          item.classList.add('active');
-        }
-        
-        item.addEventListener('click', () => {
-          document.querySelectorAll('#materials-tab .colorset-item').forEach(el => {
-            el.classList.remove('active');
-          });
-          
-          item.classList.add('active');
-          currentSettings.material = item.dataset.material;
-        });
-      });
-      
-      // Set up surface selection
-      document.querySelectorAll('#surface-tab .colorset-item').forEach(item => {
-        if (item.dataset.surface === currentSettings.surface) {
-          item.classList.add('active');
-        }
-        
-        item.addEventListener('click', () => {
-          document.querySelectorAll('#surface-tab .colorset-item').forEach(el => {
-            el.classList.remove('active');
-          });
-          
-          item.classList.add('active');
-          currentSettings.surface = item.dataset.surface;
-        });
-      });
-      
       // Set up slider event listeners
       document.getElementById('gravity-slider').addEventListener('input', (e) => {
         const value = parseInt(e.target.value);
@@ -861,6 +777,12 @@
         const value = parseFloat(e.target.value);
         currentSettings.strength = value;
         document.getElementById('strength-value').textContent = value;
+      });
+      
+      document.getElementById('scale-slider').addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        currentSettings.baseScale = value;
+        document.getElementById('scale-value').textContent = value;
       });
       
       document.getElementById('volume-slider').addEventListener('input', (e) => {
@@ -895,13 +817,7 @@
         const defaultColorsetItem = document.querySelector(`[data-colorset="${DEFAULT_SETTINGS.colorset}"]`);
         if (defaultColorsetItem) defaultColorsetItem.classList.add('active');
         
-        // Select default material
-        const defaultMaterialItem = document.querySelector(`[data-material="${DEFAULT_SETTINGS.material}"]`);
-        if (defaultMaterialItem) defaultMaterialItem.classList.add('active');
         
-        // Select default surface
-        const defaultSurfaceItem = document.querySelector(`[data-surface="${DEFAULT_SETTINGS.surface}"]`);
-        if (defaultSurfaceItem) defaultSurfaceItem.classList.add('active');
         
         // Reset sliders
         document.getElementById('gravity-slider').value = DEFAULT_SETTINGS.gravity;
@@ -909,6 +825,9 @@
         
         document.getElementById('strength-slider').value = DEFAULT_SETTINGS.strength;
         document.getElementById('strength-value').textContent = DEFAULT_SETTINGS.strength;
+        
+        document.getElementById('scale-slider').value = DEFAULT_SETTINGS.baseScale;
+        document.getElementById('scale-value').textContent = DEFAULT_SETTINGS.baseScale;
         
         document.getElementById('volume-slider').value = DEFAULT_SETTINGS.volume;
         document.getElementById('volume-value').textContent = DEFAULT_SETTINGS.volume;
@@ -929,9 +848,6 @@
       document.getElementById('save-settings').addEventListener('click', () => {
         try {
           // Validate settings before saving
-          if (!currentSettings.surface) {
-            currentSettings.surface = 'green-felt';
-          }
           
           localStorage.setItem('diceSettings', JSON.stringify(currentSettings));
           
@@ -1005,6 +921,54 @@
           console.warn(`Failed to load texture: ${this.className}`);
         });
       });
+      
+      // Function to apply dice settings to the box
+      function applyDiceSettings(settings) {
+        if (!Box) {
+          console.error('Dice box not initialized');
+          return;
+        }
+        
+        const config = {};
+        
+        // Apply colorset
+        if (settings.colorset) {
+          config.theme_colorset = settings.colorset;
+        }
+        
+        // Apply gravity
+        if (settings.gravity) {
+          config.gravity_multiplier = settings.gravity;
+        }
+        
+        // Apply toss strength
+        if (settings.strength) {
+          config.strength = settings.strength;
+        }
+        
+        // Apply volume
+        if (settings.volume !== undefined) {
+          config.volume = settings.volume;
+        }
+        
+        // Apply shadows
+        if (settings.shadows !== undefined) {
+          config.shadows = settings.shadows;
+        }
+        
+        // Apply sounds
+        if (settings.sounds !== undefined) {
+          config.sounds = settings.sounds;
+        }
+
+        // Apply scale
+        if (settings.baseScale !== undefined) {
+          config.baseScale = settings.baseScale;
+        }
+        
+        // Update the dice box with new settings
+        Box.updateConfig(config);
+      }
     });
   </script>
 </body>
