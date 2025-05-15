@@ -50,14 +50,13 @@
       
       <!-- Dice Style Toggle -->
       <div class="dice-style-toggle">
-        <div class="toggle-label">Dice Style:</div>
+        <div class="toggle-label">Custom Dice:</div>
         <div class="toggle-container">
           <label class="toggle">
             <input type="checkbox" id="custom-dice-toggle">
             <span class="toggle-slider"></span>
             <span class="toggle-labels">
-              <span class="toggle-label-left">Theme</span>
-              <span class="toggle-label-right">Custom</span>
+              <span class="toggle-label-left">ON</span>
             </span>
           </label>
         </div>
@@ -84,7 +83,7 @@
       theme_colorset: "white",
       sound_dieMaterial: null,
       theme_texture: null,
-      theme_material: "plastic",
+      theme_material: null,
       theme_surface: 'green-felt',
       theme_customColorset: null, // Add support for custom colorset
       gravity_multiplier: 400,
@@ -178,7 +177,7 @@
       
       rollResult = document.getElementById("roll-result");
       rollDetails = document.getElementById("roll-details");
-      
+
       Box.initialize().then(() => {
         rollDetails.textContent = "Ready to roll";
         console.log("Dice box initialized");
@@ -473,14 +472,13 @@
       } else if (settings.colorset) {
         // When toggle is off or no custom dice, use theme colorset
         config.theme_colorset = settings.colorset;
+        // Apply material
+        if (settings.material) {
+          config.theme_material = settings.material;
+        }
         // When using theme colorset, clear any custom colorset
         config.theme_customColorset = null;
         console.log('Applied theme colorset:', settings.colorset);
-      }
-
-      // Apply material
-      if (settings.material) {
-        config.theme_material = settings.material;
       }
       
       // Apply gravity
