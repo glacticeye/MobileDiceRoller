@@ -435,6 +435,49 @@
       content: "20";
       transform: rotate(-45deg);
     }
+    
+    /* Base colorset selection styles */
+    .base-colorset-selection {
+      margin-bottom: 20px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+    
+    .base-colorset-selection label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    
+    .select-wrapper {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .select-wrapper select {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    
+    .btn-primary {
+      padding: 8px 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+      background: #2980b9;
+    }
   </style>
 </head>
 <body>
@@ -511,6 +554,19 @@
       <div class="tab-content" id="customdice-tab">
         <div class="settings-section">
           <div class="settings-section-title">Custom Dice Factory</div>
+          
+          <!-- Base Colorset Selection -->
+          <div class="base-colorset-selection">
+            <label for="base-colorset-select">Start from premade theme:</label>
+            <div class="select-wrapper">
+              <select id="base-colorset-select">
+                <option value="">-- Choose a base theme --</option>
+                <!-- Options will be populated via JavaScript -->
+              </select>
+              <button id="apply-base-colorset" class="btn-primary">Apply</button>
+            </div>
+          </div>
+          
           <div class="color-picker-container">
             <div class="color-picker-group">
               <label>Foreground Color</label>
@@ -931,7 +987,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Default settings
       const DEFAULT_SETTINGS = {
-        colorset: 'white',
+        colorset: 'white', // Set white as the default colorset
         texture: null, // 'none' is an actual texture name, null means no texture
         material: 'plastic',
         gravity: 200,
@@ -939,7 +995,8 @@
         baseScale: 1.0,
         volume: 100,
         shadows: true,
-        sounds: true
+        sounds: true,
+        customColorset: null // Ensure custom colorset is reset as well
       };
       
       // Current settings (initialized with default values)
@@ -1197,6 +1254,22 @@
         // Reset current settings to defaults
         currentSettings = {...DEFAULT_SETTINGS};
         
+        // Reset custom dice settings
+        customDiceSettings = {
+          foreground: [],
+          background: [],
+          outline: [],
+          edge: [],
+          texture: null,
+          material: 'plastic'
+        };
+        
+        // Clear all color chips
+        updateColorChips('foreground', []);
+        updateColorChips('background', []);
+        updateColorChips('outline', []);
+        updateColorChips('edge', []);
+        
         // Update UI with default settings
         updateUIFromSettings(currentSettings);
         
@@ -1212,6 +1285,11 @@
         // Select default material
         const defaultMaterialItem = document.querySelector(`[data-material="${DEFAULT_SETTINGS.material}"]`);
         if (defaultMaterialItem) defaultMaterialItem.classList.add('active');
+        
+        // Reset all active texture selections
+        document.querySelectorAll('.texture-item.active').forEach(item => {
+          item.classList.remove('active');
+        });
         
         // Reset sliders
         document.getElementById('gravity-slider').value = DEFAULT_SETTINGS.gravity;
@@ -1229,6 +1307,9 @@
         // Reset checkboxes
         document.getElementById('shadows-checkbox').checked = DEFAULT_SETTINGS.shadows;
         document.getElementById('sounds-checkbox').checked = DEFAULT_SETTINGS.sounds;
+        
+        // Reset the custom dice preview
+        updateCustomDicePreview();
       }
       
       // Reset settings button
@@ -1445,6 +1526,118 @@
           // Update preview
           updateCustomDicePreview();
         });
+      });
+      
+      // Populate the base colorset dropdown
+      function populateBaseColorsetDropdown() {
+        const dropdown = document.getElementById('base-colorset-select');
+        if (!dropdown) return;
+        
+        // Clear existing options (except the first one)
+        while (dropdown.options.length > 1) {
+          dropdown.remove(1);
+        }
+        
+        // Add options from COLORSETS object
+        Object.entries(COLORSETS).forEach(([key, colorset]) => {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = `${colorset.name} (${colorset.category})`;
+          dropdown.appendChild(option);
+        });
+      }
+      
+      // Initialize the base colorset dropdown
+      populateBaseColorsetDropdown();
+      
+      // Set up the apply base colorset button
+      document.getElementById('apply-base-colorset')?.addEventListener('click', () => {
+        const select = document.getElementById('base-colorset-select');
+        const selectedKey = select.value;
+        
+        if (selectedKey && COLORSETS[selectedKey]) {
+          const colorset = COLORSETS[selectedKey];
+          
+          // Clear existing custom colors
+          customDiceSettings.foreground = [];
+          customDiceSettings.background = [];
+          customDiceSettings.outline = [];
+          customDiceSettings.edge = [];
+          
+          // Apply foreground colors
+          if (colorset.foreground) {
+            if (Array.isArray(colorset.foreground)) {
+              colorset.foreground.forEach(color => {
+                customDiceSettings.foreground.push(color);
+              });
+            } else {
+              customDiceSettings.foreground.push(colorset.foreground);
+            }
+            updateColorChips('foreground', customDiceSettings.foreground);
+          }
+          
+          // Apply background colors
+          if (colorset.background) {
+            if (Array.isArray(colorset.background)) {
+              colorset.background.forEach(color => {
+                customDiceSettings.background.push(color);
+              });
+            } else {
+              customDiceSettings.background.push(colorset.background);
+            }
+            updateColorChips('background', customDiceSettings.background);
+          }
+          
+          // Apply outline colors
+          if (colorset.outline) {
+            if (Array.isArray(colorset.outline)) {
+              colorset.outline.forEach(color => {
+                customDiceSettings.outline.push(color);
+              });
+            } else {
+              customDiceSettings.outline.push(colorset.outline);
+            }
+            updateColorChips('outline', customDiceSettings.outline);
+          }
+          
+          // Apply edge colors
+          if (colorset.edge) {
+            if (Array.isArray(colorset.edge)) {
+              colorset.edge.forEach(color => {
+                customDiceSettings.edge.push(color);
+              });
+            } else if (colorset.edge !== 'none') {
+              customDiceSettings.edge.push(colorset.edge);
+            }
+            updateColorChips('edge', customDiceSettings.edge);
+          }
+          
+          // Apply texture
+          if (colorset.texture && colorset.texture !== 'none') {
+            let texture;
+            if (Array.isArray(colorset.texture)) {
+              texture = colorset.texture[0];
+            } else {
+              texture = colorset.texture;
+            }
+            
+            customDiceSettings.texture = texture;
+            
+            // Update texture selection UI
+            document.querySelectorAll('.texture-item').forEach(item => {
+              item.classList.remove('active');
+              if (item.dataset.texture === texture) {
+                item.classList.add('active');
+              }
+            });
+          }
+          
+          // Update preview
+          updateCustomDicePreview();
+          
+          // Reset the dropdown
+          select.selectedIndex = 0;
+        }
       });
       
       // Set up tab navigation

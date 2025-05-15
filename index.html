@@ -47,6 +47,21 @@
         <button id="clear-btn">Clear</button>
         <button id="roll-btn">Roll</button>
       </div>
+      
+      <!-- Dice Style Toggle -->
+      <div class="dice-style-toggle">
+        <div class="toggle-label">Dice Style:</div>
+        <div class="toggle-container">
+          <label class="toggle">
+            <input type="checkbox" id="custom-dice-toggle">
+            <span class="toggle-slider"></span>
+            <span class="toggle-labels">
+              <span class="toggle-label-left">Theme</span>
+              <span class="toggle-label-right">Custom</span>
+            </span>
+          </label>
+        </div>
+      </div>
     </div>
   </div>
   
@@ -182,6 +197,27 @@
       
       // Load settings from localStorage
       loadDiceSettings();
+      
+      // Set up toggle event listener
+      const customDiceToggle = document.getElementById('custom-dice-toggle');
+      if (customDiceToggle) {
+        // Initialize toggle state from localStorage
+        try {
+          const useCustomDice = localStorage.getItem('useCustomDice') === 'true';
+          customDiceToggle.checked = useCustomDice;
+        } catch (e) {
+          console.error('Error loading toggle state:', e);
+        }
+        
+        // Listen for toggle changes
+        customDiceToggle.addEventListener('change', () => {
+          // Save toggle state
+          localStorage.setItem('useCustomDice', customDiceToggle.checked);
+          
+          // Apply current settings with new toggle state
+          applyDiceSettings(currentSettings);
+        });
+      }
       
       // Listen for settings changes when returning from settings page
       window.addEventListener('pageshow', (event) => {
@@ -372,7 +408,7 @@
     function resetToDefaultSettings() {
       // Default settings 
       const defaultSettings = {
-        colorset: 'white',
+        colorset: 'white', // White is the default color theme
         material: 'plastic',
         surface: 'green-felt',
         gravity: 100,
@@ -381,7 +417,7 @@
         shadows: true,
         sounds: true,
         baseScale: 100,
-        customColorset: null
+        customColorset: null // Ensure no custom colorset is used by default
       };
       
       // Apply default settings
@@ -402,12 +438,17 @@
       
       const config = {};
       
-      // Apply colorset or custom colorset (custom takes precedence)
-      if (settings.customColorset) {
+      // Check the toggle state to determine which dice style to use
+      const useCustomDice = document.getElementById('custom-dice-toggle') && 
+                           document.getElementById('custom-dice-toggle').checked;
+      
+      // Apply custom colorset if toggle is on and custom settings exist
+      if (useCustomDice && settings.customColorset) {
         config.theme_customColorset = settings.customColorset;
         // When using custom colorset, clear the theme_colorset
         config.theme_colorset = null;
       } else if (settings.colorset) {
+        // When toggle is off or no custom dice, use theme colorset
         config.theme_colorset = settings.colorset;
         // When using theme colorset, clear any custom colorset
         config.theme_customColorset = null;
