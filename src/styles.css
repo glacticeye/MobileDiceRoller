@@ -457,6 +457,7 @@ html, body {
 .texture-skulls { background-image: url('assets/textures/skulls.webp'); }
 .texture-paper-bump { background-image: url('assets/textures/paper-bump.webp'); }
 .texture-metal { background-image: url('assets/textures/metal.webp'); }
+.texture-wood { background-image: url('assets/textures/wood.webp'); }
 .texture-water { background-image: url('assets/textures/water.webp'); }
 .texture-glitter { background-image: url('assets/textures/glitter.webp'); }
 

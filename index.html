@@ -69,10 +69,10 @@
       theme_colorset: "white",
       sound_dieMaterial: null,
       theme_texture: null,
-      theme_material: null,
+      theme_material: "plastic",
       theme_surface: 'green-felt',
       gravity_multiplier: 400,
-      light_intensity: 1,
+      // light_intensity: 1,
       baseScale: 150,
       strength: 2.5,
       onRollComplete: () => {},
@@ -371,7 +371,8 @@
     function resetToDefaultSettings() {
       // Default settings 
       const defaultSettings = {
-        colorset: 'fire',
+        colorset: 'white',
+        material: 'plastic',
         surface: 'green-felt',
         gravity: 100,
         strength: 1,
@@ -402,6 +403,11 @@
       // Apply colorset
       if (settings.colorset) {
         config.theme_colorset = settings.colorset;
+      }
+
+      // Apply material
+      if (settings.material) {
+        config.theme_material = settings.material;
       }
       
       // Apply gravity

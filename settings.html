@@ -180,6 +180,7 @@
     .texture-skulls { background-image: url('assets/textures/skulls.webp'); }
     .texture-paper-bump { background-image: url('assets/textures/paper-bump.webp'); }
     .texture-metal { background-image: url('assets/textures/metal.webp'); }
+    .texture-wood { background-image: url('assets/textures/wood.webp'); }
     .texture-water { background-image: url('assets/textures/water.webp'); }
     .texture-glitter { background-image: url('assets/textures/glitter.webp'); }
 
@@ -276,6 +277,7 @@
     <!-- Tab Navigation -->
     <div class="tabs">
       <div class="tab active" data-tab="colorsets">Themes</div>
+      <div class="tab" data-tab="materials">Materials</div>
       <div class="tab" data-tab="other">Options</div>
     </div>
     
@@ -297,7 +299,42 @@
         </div>
       </div>
       
-      
+      <!-- Materials Tab -->
+      <div class="tab-content" id="materials-tab">
+        <div class="settings-section">
+          <div class="settings-section-title">Dice Materials</div>
+          <div class="colorset-grid">
+            <div class="colorset-item" data-material="metal">
+              <div class="colorset-preview">
+                <div class="texture-overlay texture-metal"></div>
+                M
+              </div>
+              <div class="colorset-name">Metal</div>
+            </div>
+            <div class="colorset-item" data-material="wood">
+              <div class="colorset-preview">
+                <div class="texture-overlay texture-wood"></div>
+                W
+              </div>
+              <div class="colorset-name">Wood</div>
+            </div>
+            <div class="colorset-item" data-material="glass">
+              <div class="colorset-preview">
+                <div class="texture-overlay texture-stainedglass"></div>
+                G
+              </div>
+              <div class="colorset-name">Glass</div>
+            </div>
+            <div class="colorset-item" data-material="plastic">
+              <div class="colorset-preview">
+                <div class="texture-overlay texture-speckles"></div>
+                P
+              </div>
+              <div class="colorset-name">Plastic</div>
+            </div>
+          </div>
+        </div>
+      </div>
         
       <!-- Other Settings Tab -->
       <div class="tab-content" id="other-tab">
@@ -602,6 +639,7 @@
       const DEFAULT_SETTINGS = {
         colorset: 'white',
         texture: null, // 'none' is an actual texture name, null means no texture
+        material: 'plastic',
         gravity: 200,
         strength: 1.5,
         baseScale: 1.0,
@@ -651,7 +689,10 @@
           if (colorsetItem) colorsetItem.classList.add('active');
         }
         
-        
+        if (settings.material) {
+          const materialItem = document.querySelector(`[data-material="${settings.material}"]`);
+          if (materialItem) materialItem.classList.add('active');
+        }
       }
       
       // Generate colorset items
@@ -766,6 +807,22 @@
         });
       });
       
+      // Set up material selection
+      document.querySelectorAll('#materials-tab .colorset-item').forEach(item => {
+        if (item.dataset.material === currentSettings.material) {
+          item.classList.add('active');
+        }
+        
+        item.addEventListener('click', () => {
+          document.querySelectorAll('#materials-tab .colorset-item').forEach(el => {
+            el.classList.remove('active');
+          });
+          
+          item.classList.add('active');
+          currentSettings.material = item.dataset.material;
+        });
+      });
+      
       // Set up slider event listeners
       document.getElementById('gravity-slider').addEventListener('input', (e) => {
         const value = parseInt(e.target.value);
@@ -817,7 +874,9 @@
         const defaultColorsetItem = document.querySelector(`[data-colorset="${DEFAULT_SETTINGS.colorset}"]`);
         if (defaultColorsetItem) defaultColorsetItem.classList.add('active');
         
-        
+        // Select default material
+        const defaultMaterialItem = document.querySelector(`[data-material="${DEFAULT_SETTINGS.material}"]`);
+        if (defaultMaterialItem) defaultMaterialItem.classList.add('active');
         
         // Reset sliders
         document.getElementById('gravity-slider').value = DEFAULT_SETTINGS.gravity;
@@ -934,6 +993,11 @@
         // Apply colorset
         if (settings.colorset) {
           config.theme_colorset = settings.colorset;
+        }
+        
+        // Apply material
+        if (settings.material) {
+          config.material = settings.material;
         }
         
         // Apply gravity
