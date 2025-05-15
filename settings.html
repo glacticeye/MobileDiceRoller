@@ -460,8 +460,7 @@
         <div class="settings-section">
           <div class="settings-section-title">Color Themes</div>
           <div class="filter-controls">
-            <button class="filter-btn active" data-category="all">All</button>
-            <button class="filter-btn" data-category="Damage Types">Damage Types</button>
+            <button class="filter-btn active" data-category="Damage Types">Damage Types</button>
             <button class="filter-btn" data-category="Elements">Elements</button>
             <button class="filter-btn" data-category="Colors">Colors</button>
             <button class="filter-btn" data-category="Custom Sets">Custom Sets</button>
@@ -1124,8 +1123,8 @@
         });
       }
       
-      // Generate initial colorset items
-      generateColorsetItems();
+      // Generate initial colorset items with Damage Types filter
+      generateColorsetItems('Damage Types');
       
       // Set up category filter buttons
       document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1144,13 +1143,13 @@
       });
       
       // Set up material selection
-      document.querySelectorAll('#materials-tab .colorset-item').forEach(item => {
+      document.querySelectorAll('[data-material]').forEach(item => {
         if (item.dataset.material === currentSettings.material) {
           item.classList.add('active');
         }
         
         item.addEventListener('click', () => {
-          document.querySelectorAll('#materials-tab .colorset-item').forEach(el => {
+          document.querySelectorAll('[data-material]').forEach(el => {
             el.classList.remove('active');
           });
           
